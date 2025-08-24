@@ -717,6 +717,310 @@
             font-size: 1.5rem;
         }
 
+/* Responsive Auto-scrolling Banner Styles */
+.banner-section {
+    margin-bottom: clamp(20px, 5vw, 40px);
+    overflow: hidden;
+    border-radius: clamp(8px, 3vw, 15px);
+    position: relative;
+    width: 100%;
+}
+
+.banner-carousel {
+    display: flex;
+    gap: clamp(10px, 3vw, 20px);
+    animation: autoScroll 15s linear infinite;
+    width: calc(var(--banner-width) * 6);
+    will-change: transform;
+}
+
+:root {
+    --banner-width: clamp(250px, 60vw, 380px);
+    --banner-height: clamp(140px, 35vw, 220px);
+}
+
+@keyframes autoScroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Pause animation on hover for desktop */
+@media (hover: hover) and (pointer: fine) {
+    .banner-carousel:hover {
+        animation-play-state: paused;
+    }
+}
+
+.banner-item {
+    flex: 0 0 auto;
+    width: var(--banner-width);
+    position: relative;
+}
+
+.banner-item img {
+    width: 100%;
+    height: var(--banner-height);
+    object-fit: cover;
+    border-radius: clamp(8px, 2vw, 15px);
+    border: clamp(1px, 0.5vw, 3px) solid rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    display: block;
+}
+
+/* Desktop hover effects */
+@media (hover: hover) and (pointer: fine) {
+    .banner-item img:hover {
+        transform: scale(1.05);
+        border-color: #00d4ff;
+        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+    }
+}
+
+/* Mobile optimizations */
+@media (max-width: 768px) {
+    :root {
+        --banner-width: clamp(200px, 70vw, 300px);
+        --banner-height: clamp(120px, 30vw, 180px);
+    }
+    
+    .banner-carousel {
+        gap: clamp(8px, 2vw, 15px);
+        animation-duration: 20s; /* Slower on mobile for better visibility */
+    }
+    
+    .banner-item img {
+        border-width: 2px;
+    }
+    
+    /* Touch feedback for mobile */
+    .banner-item img:active {
+        transform: scale(0.98);
+        transition: transform 0.1s ease;
+    }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+    :root {
+        --banner-width: clamp(180px, 80vw, 250px);
+        --banner-height: clamp(100px, 25vw, 150px);
+    }
+    
+    .banner-section {
+        margin-bottom: 20px;
+        border-radius: 8px;
+    }
+    
+    .banner-carousel {
+        gap: 8px;
+        animation-duration: 25s;
+    }
+    
+    .banner-item img {
+        border-radius: 8px;
+        border-width: 1px;
+    }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+    :root {
+        --banner-width: 400px;
+        --banner-height: 250px;
+    }
+    
+    .banner-carousel {
+        gap: 25px;
+        animation-duration: 12s;
+    }
+}
+
+/* Ultra-wide screens */
+@media (min-width: 1600px) {
+    :root {
+        --banner-width: 450px;
+        --banner-height: 280px;
+    }
+    
+    .banner-section {
+        margin-bottom: 50px;
+    }
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .banner-item img {
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .banner-carousel {
+        animation: none;
+    }
+    
+    .banner-item img {
+        transition: none;
+    }
+    
+    .banner-item img:hover {
+        transform: none;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .banner-item img {
+        border-color: rgba(0, 123, 255, 0.4);
+    }
+    
+    .banner-item img:hover {
+        border-color: #00d4ff;
+        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
+    }
+}
+
+/* Landscape mobile orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+    :root {
+        --banner-height: clamp(80px, 20vw, 120px);
+    }
+    
+    .banner-section {
+        margin-bottom: 15px;
+    }
+}
+
+/* Portrait tablet */
+@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+    :root {
+        --banner-width: clamp(280px, 60vw, 350px);
+        --banner-height: clamp(160px, 32vw, 200px);
+    }
+}
+
+/* Landscape tablet */
+@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+    :root {
+        --banner-width: clamp(300px, 45vw, 380px);
+        --banner-height: clamp(180px, 28vw, 220px);
+    }
+}
+
+/* Container queries for modern browsers */
+@supports (container-type: inline-size) {
+    .banner-section {
+        container-type: inline-size;
+    }
+    
+    @container (max-width: 500px) {
+        :root {
+            --banner-width: clamp(160px, 75vw, 220px);
+            --banner-height: clamp(90px, 22vw, 130px);
+        }
+        
+        .banner-carousel {
+            gap: 6px;
+        }
+    }
+    
+    @container (min-width: 1000px) {
+        :root {
+            --banner-width: 400px;
+            --banner-height: 250px;
+        }
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .banner-item img {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    .banner-item img:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+    .banner-section {
+        margin-left: max(10px, env(safe-area-inset-left));
+        margin-right: max(10px, env(safe-area-inset-right));
+    }
+}
+
+/* Loading state */
+.banner-item img[loading="lazy"] {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Performance optimizations */
+.banner-carousel {
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.banner-item img {
+    transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* Print styles */
+@media print {
+    .banner-section {
+        display: none;
+    }
+}
+
+/* Focus styles for accessibility */
+.banner-item img:focus {
+    outline: 2px solid #00d4ff;
+    outline-offset: 2px;
+}
+
+/* Error state for broken images */
+.banner-item img::after {
+    content: "Image failed to load";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: none;
+}
+
+.banner-item img:not([src]),
+.banner-item img[src=""] {
+    background: #f0f0f0;
+}
+
+.banner-item img:not([src])::after,
+.banner-item img[src=""]::after {
+    display: block;
+}
+
         .selected-category-item {
             display: flex;
             justify-content: space-between;

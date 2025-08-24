@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SSOHIS Dinner Night & Award - Nomination System</title>
+    <title>Nulass Dinner Night & Award - Nomination System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         * {
@@ -144,8 +144,53 @@
             font-size: 1.2rem;
         }
 
+        /* Banner Styles */
+        .banner-section {
+            margin-bottom: 40px;
+            overflow: hidden;
+            border-radius: 15px;
+        }
 
-        
+        .banner-carousel {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 0;
+            scroll-behavior: smooth;
+        }
+
+        .banner-carousel::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .banner-carousel::-webkit-scrollbar-track {
+            background: rgba(183, 65, 14, 0.1);
+            border-radius: 4px;
+        }
+
+        .banner-carousel::-webkit-scrollbar-thumb {
+            background: #B7410E;
+            border-radius: 4px;
+        }
+
+        .banner-item {
+            flex: 0 0 auto;
+            width: 380px;
+        }
+
+        .banner-item img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 3px solid rgba(183, 65, 14, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .banner-item img:hover {
+            transform: scale(1.05);
+            border-color: #ba6123;
+        }
 
         /* Progress Steps */
         .progress-steps {
@@ -651,311 +696,6 @@
         .custom-radio input:checked ~ .radio-checkmark:after {
             display: block;
         }
-
-
-/* Responsive Auto-scrolling Banner Styles */
-.banner-section {
-    margin-bottom: clamp(20px, 5vw, 40px);
-    overflow: hidden;
-    border-radius: clamp(8px, 3vw, 15px);
-    position: relative;
-    width: 100%;
-}
-
-.banner-carousel {
-    display: flex;
-    gap: clamp(10px, 3vw, 20px);
-    animation: autoScroll 15s linear infinite;
-    width: calc(var(--banner-width) * 6);
-    will-change: transform;
-}
-
-:root {
-    --banner-width: clamp(250px, 60vw, 380px);
-    --banner-height: clamp(140px, 35vw, 220px);
-}
-
-@keyframes autoScroll {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-/* Pause animation on hover for desktop */
-@media (hover: hover) and (pointer: fine) {
-    .banner-carousel:hover {
-        animation-play-state: paused;
-    }
-}
-
-.banner-item {
-    flex: 0 0 auto;
-    width: var(--banner-width);
-    position: relative;
-}
-
-.banner-item img {
-    width: 100%;
-    height: var(--banner-height);
-    object-fit: cover;
-    border-radius: clamp(8px, 2vw, 15px);
-    border: clamp(1px, 0.5vw, 3px) solid rgba(0, 123, 255, 0.3);
-    transition: all 0.3s ease;
-    display: block;
-}
-
-/* Desktop hover effects */
-@media (hover: hover) and (pointer: fine) {
-    .banner-item img:hover {
-        transform: scale(1.05);
-        border-color: #00d4ff;
-        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-    }
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    :root {
-        --banner-width: clamp(200px, 70vw, 300px);
-        --banner-height: clamp(120px, 30vw, 180px);
-    }
-    
-    .banner-carousel {
-        gap: clamp(8px, 2vw, 15px);
-        animation-duration: 20s; /* Slower on mobile for better visibility */
-    }
-    
-    .banner-item img {
-        border-width: 2px;
-    }
-    
-    /* Touch feedback for mobile */
-    .banner-item img:active {
-        transform: scale(0.98);
-        transition: transform 0.1s ease;
-    }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-    :root {
-        --banner-width: clamp(180px, 80vw, 250px);
-        --banner-height: clamp(100px, 25vw, 150px);
-    }
-    
-    .banner-section {
-        margin-bottom: 20px;
-        border-radius: 8px;
-    }
-    
-    .banner-carousel {
-        gap: 8px;
-        animation-duration: 25s;
-    }
-    
-    .banner-item img {
-        border-radius: 8px;
-        border-width: 1px;
-    }
-}
-
-/* Large screens */
-@media (min-width: 1200px) {
-    :root {
-        --banner-width: 400px;
-        --banner-height: 250px;
-    }
-    
-    .banner-carousel {
-        gap: 25px;
-        animation-duration: 12s;
-    }
-}
-
-/* Ultra-wide screens */
-@media (min-width: 1600px) {
-    :root {
-        --banner-width: 450px;
-        --banner-height: 280px;
-    }
-    
-    .banner-section {
-        margin-bottom: 50px;
-    }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .banner-item img {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-    }
-}
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .banner-carousel {
-        animation: none;
-    }
-    
-    .banner-item img {
-        transition: none;
-    }
-    
-    .banner-item img:hover {
-        transform: none;
-    }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .banner-item img {
-        border-color: rgba(0, 123, 255, 0.4);
-    }
-    
-    .banner-item img:hover {
-        border-color: #00d4ff;
-        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
-    }
-}
-
-/* Landscape mobile orientation */
-@media (max-height: 500px) and (orientation: landscape) {
-    :root {
-        --banner-height: clamp(80px, 20vw, 120px);
-    }
-    
-    .banner-section {
-        margin-bottom: 15px;
-    }
-}
-
-/* Portrait tablet */
-@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
-    :root {
-        --banner-width: clamp(280px, 60vw, 350px);
-        --banner-height: clamp(160px, 32vw, 200px);
-    }
-}
-
-/* Landscape tablet */
-@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-    :root {
-        --banner-width: clamp(300px, 45vw, 380px);
-        --banner-height: clamp(180px, 28vw, 220px);
-    }
-}
-
-/* Container queries for modern browsers */
-@supports (container-type: inline-size) {
-    .banner-section {
-        container-type: inline-size;
-    }
-    
-    @container (max-width: 500px) {
-        :root {
-            --banner-width: clamp(160px, 75vw, 220px);
-            --banner-height: clamp(90px, 22vw, 130px);
-        }
-        
-        .banner-carousel {
-            gap: 6px;
-        }
-    }
-    
-    @container (min-width: 1000px) {
-        :root {
-            --banner-width: 400px;
-            --banner-height: 250px;
-        }
-    }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-    .banner-item img {
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .banner-item img:active {
-        opacity: 0.8;
-        transform: scale(0.98);
-    }
-}
-
-/* Safe area insets for notched devices */
-@supports (padding: max(0px)) {
-    .banner-section {
-        margin-left: max(10px, env(safe-area-inset-left));
-        margin-right: max(10px, env(safe-area-inset-right));
-    }
-}
-
-/* Loading state */
-.banner-item img[loading="lazy"] {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-/* Performance optimizations */
-.banner-carousel {
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-}
-
-.banner-item img {
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-}
-
-/* Print styles */
-@media print {
-    .banner-section {
-        display: none;
-    }
-}
-
-/* Focus styles for accessibility */
-.banner-item img:focus {
-    outline: 2px solid #00d4ff;
-    outline-offset: 2px;
-}
-
-/* Error state for broken images */
-.banner-item img::after {
-    content: "Image failed to load";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 12px;
-    display: none;
-}
-
-.banner-item img:not([src]),
-.banner-item img[src=""] {
-    background: #f0f0f0;
-}
-
-.banner-item img:not([src])::after,
-.banner-item img[src=""]::after {
-    display: block;
-}
 
         /* Nominee Details Section */
         .nominee-details {
@@ -1644,7 +1384,9 @@
                 grid-template-columns: 1fr;
             }
 
-           
+            .banner-item {
+                width: 300px;
+            }
 
             .selection-controls {
                 flex-direction: column;
@@ -1670,7 +1412,13 @@
         }
 
         @media (max-width: 480px) {
-            
+            .banner-item {
+                width: 260px;
+            }
+
+            .banner-item img {
+                height: 180px;
+            }
 
             .nominee-info {
                 flex-direction: column;
@@ -1800,14 +1548,17 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-          <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg"  alt="Rewarder Logo" class="logo">
-            <div class="header-content">
-                <p class="event-description">Pay your nomination fee </p>
-                
+           <div class="header-content">
+             <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg"  alt="Nulass Logo" class="logo">
+          
+                <p class="event-description">Pay your nomination fee to Proceed to Voting Stage  </p>
+                <div class="host-info">
+                    Committee Chairman: <strong>Bami</strong>
+                </div>
         </div>
         </div>
 
-        <!-- Banner Section -->
+       <!-- Banner Section -->
         <div class="banner-section">
             <div class="banner-carousel">
                 <div class="banner-item">
@@ -1821,7 +1572,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Progress Steps -->
         <div class="progress-steps">
             <div class="step active" id="step1">
@@ -1858,7 +1608,7 @@
             
             <div class="alert alert-info" id="authDescription">
                 <i class="fas fa-info-circle"></i> 
-                <span id="authDescText">Nulass Dinner and Award Night .</span>
+                <span id="authDescText"> Nulass Awards 🤓.</span>
             </div>
 
             <form id="registrationForm">
@@ -1950,20 +1700,63 @@
                 <div id="imagePreview"></div>
             </div>
 
+            <div class="section-buttons">
+                <button class="btn btn-secondary" onclick="goBackToCategories()">
+                    <i class="fas fa-arrow-left"></i> Back to Categories
+                </button>
+                <button id="proceedToPayment" class="btn" onclick="proceedToPaymentSection()">
+                    <i class="fas fa-arrow-right"></i> Proceed to Payment
+                </button>
+            </div>
+        </div>
+
+        <!-- Payment Section -->
+        <div id="paymentSection" class="section" style="display: none;">
+            <h2><i class="fas fa-credit-card"></i> Payment & Submission</h2>
+            
+            <!-- Payment Summary -->
+            <div class="payment-section">
+                <h3><i class="fas fa-calculator"></i> Payment Summary</h3>
+                <div class="payment-item">
+                    <span>Base Fee (per category):</span>
+                    <span>₦1,000.00</span>
+                </div>
+                <div class="payment-item">
+                    <span>Selected Categories:</span>
+                    <span id="categoryCount">1</span>
+                </div>
+                <div class="payment-item">
+                    <span>Subtotal:</span>
+                    <span>₦<span id="subtotalAmount">1,000</span></span>
+                </div>
+                <div class="payment-item">
+                    <span>Service Charge (₦50 per category):</span>
+                    <span>₦<span id="serviceFeeAmount">50</span></span>
+                </div>
+                <div class="payment-item">
+                    <span>Processing Fee (₦100 per category):</span>
+                    <span>₦<span id="processingFeeAmount">100</span></span>
+                </div>
+                <div class="payment-item">
+                    <span>Total Amount:</span>
+                    <span>₦<span id="totalAmount">1,150</span></span>
+                </div>
+            </div>
+
             <!-- Bank Transfer Details -->
             <div class="payment-section">
                 <h3><i class="fas fa-university"></i> Bank Transfer Details</h3>
                 <div class="payment-item">
                     <span>Bank Name:</span>
-                    <span>Palmpay</span>
+                    <span>GTBank/span>
                 </div>
                 <div class="payment-item">
                     <span>Account Name:</span>
-                    <span>ABDULLAHI AYOBAMI GBADAMOSI</span>
+                    <span>Salisu Rofiat Oyindamola</span>
                 </div>
                 <div class="payment-item">
                     <span>Account Number:</span>
-                    <span>9095074208</span>
+                    <span>0656350237</span>
                 </div>
                 <div class="payment-item">
                     <span>Transfer Amount:</span>
@@ -1990,38 +1783,14 @@
                 </div>
             </div>
 
-            <!-- Payment Summary -->
-            <div class="payment-section">
-                <h3><i class="fas fa-calculator"></i> Payment Summary</h3>
-                <div class="payment-item">
-                    <span>Base Fee (per category):</span>
-                    <span>₦1,000.00</span>
-                </div>
-                <div class="payment-item">
-                    <span>Selected Categories:</span>
-                    <span id="categoryCount">1</span>
-                </div>
-                <div class="payment-item">
-                    <span>Subtotal:</span>
-                    <span>₦<span id="subtotalAmount">1,000</span></span>
-                </div>
-                <div class="payment-item">
-                    <span>Service Charge:</span>
-                    <span>₦100</span>
-                </div>
-                <div class="payment-item">
-                    <span>Processing Fee:</span>
-                    <span>₦50</span>
-                </div>
-                <div class="payment-item">
-                    <span>Total Amount:</span>
-                    <span>₦<span id="totalAmount">1150</span></span>
-                </div>
+            <div class="section-buttons">
+                <button class="btn btn-secondary" onclick="goBackToDetails()">
+                    <i class="fas fa-arrow-left"></i> Back to Details
+                </button>
+                <button id="submitNomination" class="btn" onclick="handleSubmission()">
+                    <i class="fas fa-paper-plane"></i> Submit Nomination
+                </button>
             </div>
-
-            <button id="proceedToPayment" class="btn">
-                <i class="fas fa-paper-plane"></i> Submit Nomination
-            </button>
         </div>
 
         <!-- Loading Screen -->
@@ -2033,6 +1802,13 @@
         <!-- Fixed Selection Counter -->
         <div id="fixedCounter" class="fixed-counter">
             Categories: <span id="fixedSelectedCount">0</span>
+        </div>
+
+        <!-- Fixed User Logout Button -->
+        <div id="fixedLogoutBtn" class="fixed-logout" style="display: none;">
+            <button class="btn btn-secondary" onclick="logoutUser()" title="Logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
         </div>
 <div class="host-info">
             <strong> D e s i r e L e d A d m i n i s t r a t i o n </strong>
@@ -2048,9 +1824,9 @@
                     Your nomination has been successfully submitted and saved to our database.
                 </p>
                 <div class="success-comeback">
-                   Now Checkout the Rewarder app 
+                    🎉 Come back again when you win the voting rounds! 🏆
                 </div>
-                <button class="btn btn-success" onclick="rewarderhub.vercel.app">
+                <button class="btn btn-success" onclick="closeSuccessModal()">
                     <i class="fas fa-home"></i> Continue
                 </button>
             </div>
@@ -2066,7 +1842,7 @@
             <img src="https://i.ibb.co/VpC27tbt/Rewarder-logo.png" alt="Rewarder Logo">
             <p><strong>Powered by Rewarder</strong></p>
         </div>
-         <div class="host-info">
+          <div class="host-info">
                     Hosted by: <strong> 35th Administration Anniversary</strong>
                 </div>
     </div>
@@ -2076,13 +1852,10 @@
         <div class="container">
             <!-- Admin Header -->
             <div class="header">
-                <img src="https://i.ibb.co/VpC27tbt/Rewarder-logo.png" alt="Rewarder Logo" class="logo">
-                <div class="header-content">
-                    <h1 class="event-title">Admin for Nulass Award</h1>
-                    <h2 class="event-slogan">Administrative Dashboard</h2>
-                    <p class="event-description">Manage nominations and view voting statistics</p>
-                    <div class="host-info">
-                        Admin Panel - <strong id="adminEmail">Admin User</strong>
+               <div class="header-content">
+                    <h1 class="event-title">Admin </h1>
+                    <h2 class="event-slogan">for Nulass Award</h2>
+                   <div class="host-info">
                         <button class="btn btn-secondary" onclick="logoutAdmin()" style="margin-left: 20px; padding: 8px 16px; font-size: 14px;">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </button>
@@ -2155,9 +1928,6 @@
                 <img src="https://i.ibb.co/VpC27tbt/Rewarder-logo.png" alt="Rewarder Logo">
                 <p><strong>Powered by Rewarder</strong></p>
             </div>
-            <div class="host-info">
-                    Hosted by: <strong> 35th Administration Anniversary</strong>
-                </div>
         </div>
     </div>
 
@@ -2220,8 +1990,8 @@
                 name: 'Executive of the Year',
                 nominees: [
                     { name: 'Desire Anjorin' },
-                    { name: 'Ololunosebi' },
-                    { name: 'Anjorin Desire' }
+                    { name: 'Ololunosebi' }
+                    
                 ]
             },
             'parliamentarian_of_year': {
@@ -2232,7 +2002,7 @@
                     { name: 'Ishola' },
                     { name: 'Da Silva' },
                     { name: 'Hon. Ayobami' },
-                    { name: 'Ololun' },
+                    { name: 'Ololunosebi' },
                     { name: 'Ogunbiyi Yewande' },
                     { name: 'Justice' },
                     { name: 'Rashidat Sulamon' },
@@ -2515,6 +2285,19 @@
             setupEventListeners();
             renderCategories();
             initScrollToTop();
+            
+            // Auth state listener
+            auth.onAuthStateChanged(user => {
+                if (user && !isAdmin) {
+                    console.log('User authenticated:', user.email);
+                    currentUser = user;
+                    document.getElementById('userLogoutBtn').style.display = 'block';
+                } else if (!user) {
+                    console.log('User signed out');
+                    document.getElementById('userLogoutBtn').style.display = 'none';
+                }
+            });
+            
             console.log('Firebase Auth:', auth ? 'Initialized' : 'Not initialized');
             console.log('Firebase DB:', db ? 'Initialized' : 'Not initialized');
         });
@@ -2793,6 +2576,11 @@
                 registrationSection.style.display = 'none';
                 categorySection.style.display = 'block';
                 updateProgressSteps(2);
+                
+                // Show logout button for regular users
+                if (!isAdmin) {
+                    document.getElementById('userLogoutBtn').style.display = 'block';
+                }
 
             } catch (error) {
                 console.error('Authentication error:', error);
@@ -3040,12 +2828,14 @@
         function updatePaymentCalculation() {
             const categoryCount = Object.keys(selectedNominations).length;
             const subtotal = categoryCount * 1000;
-            const serviceFee = 150;
-            const processingFee = 100;
+            const serviceFee = categoryCount * 50;
+            const processingFee = categoryCount * 100;
             const total = subtotal + serviceFee + processingFee;
             
             document.getElementById('categoryCount').textContent = categoryCount;
             document.getElementById('subtotalAmount').textContent = subtotal.toLocaleString();
+            document.getElementById('serviceFeeAmount').textContent = serviceFee.toLocaleString();
+            document.getElementById('processingFeeAmount').textContent = processingFee.toLocaleString();
             document.getElementById('totalAmount').textContent = total.toLocaleString();
             document.getElementById('bankTransferAmount').textContent = total.toLocaleString();
         }
@@ -3072,6 +2862,43 @@
                 `;
                 summaryList.appendChild(item);
             });
+        }
+
+        // Navigation Functions
+        function goBackToCategories() {
+            detailsSection.style.display = 'none';
+            categorySection.style.display = 'block';
+            updateProgressSteps(2);
+        }
+
+        function proceedToPaymentSection() {
+            // Validate name and profile image first
+            const name = document.getElementById('nomineeName').value.trim();
+            const imageFile = document.getElementById('nomineeImage').files[0];
+            
+            if (!name) {
+                showAlert('Please enter your full name!', 'error');
+                return;
+            }
+            
+            if (!imageFile || !profileImageBase64) {
+                showAlert('Please upload your profile image!', 'error');
+                return;
+            }
+            
+            // Update payment calculation
+            updatePaymentCalculation();
+            
+            // Show payment section
+            detailsSection.style.display = 'none';
+            document.getElementById('paymentSection').style.display = 'block';
+            updateProgressSteps(4);
+        }
+
+        function goBackToDetails() {
+            document.getElementById('paymentSection').style.display = 'none';
+            detailsSection.style.display = 'block';
+            updateProgressSteps(3);
         }
 
         // Handle Image Preview
@@ -3162,8 +2989,8 @@
                 // Calculate payment details
                 const categoryCount = Object.keys(selectedNominations).length;
                 const baseAmount = categoryCount * 1000;
-                const serviceFee = categoryCount * 100;
-                const processingFee = categoryCount * 50;
+                const serviceFee = categoryCount * 50;
+                const processingFee = categoryCount * 100;
                 const totalAmount = baseAmount + serviceFee + processingFee;
                 
                 // Save with base64 image data
@@ -3286,6 +3113,50 @@
             console.log('Admin dashboard loaded');
         }
 
+        // User Logout
+        function logoutUser() {
+            if (confirm('Are you sure you want to logout? Your progress will be lost.')) {
+                // Reset all user data
+                currentUser = null;
+                selectedNominations = {};
+                profileImageBase64 = null;
+                paymentScreenshotBase64 = null;
+                isAdmin = false;
+                isLoginMode = false;
+                
+                // Hide logout button
+                document.getElementById('userLogoutBtn').style.display = 'none';
+                
+                // Show registration section and hide others
+                registrationSection.style.display = 'block';
+                categorySection.style.display = 'none';
+                detailsSection.style.display = 'none';
+                
+                // Reset progress steps
+                updateProgressSteps(1);
+                
+                // Reset auth form
+                toggleAuthMode('register');
+                document.getElementById('registrationForm').reset();
+                
+                // Clear image previews
+                document.getElementById('imagePreview').innerHTML = '';
+                document.getElementById('screenshotPreview').innerHTML = '';
+                
+                // Clear selection displays
+                updateSelectionDisplay();
+                updatePaymentCalculation();
+                
+                // Sign out from Firebase if signed in
+                if (auth.currentUser) {
+                    auth.signOut().catch(error => console.error('Firebase signout error:', error));
+                }
+                
+                showAlert('Logged out successfully. Please login again to continue.', 'info');
+                console.log('User logged out');
+            }
+        }
+
         // Admin Logout
         function logoutAdmin() {
             if (confirm('Are you sure you want to logout?')) {
@@ -3304,7 +3175,13 @@
                 toggleAuthMode('register');
                 document.getElementById('registrationForm').reset();
                 
-                showAlert('Logged out successfully', 'info');
+                // Sign out from Firebase if signed in
+                if (auth.currentUser) {
+                    auth.signOut().catch(error => console.error('Firebase signout error:', error));
+                }
+                
+                showAlert('Admin logged out successfully', 'info');
+                console.log('Admin logged out');
             }
         }
 

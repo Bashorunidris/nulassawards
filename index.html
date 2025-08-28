@@ -2191,10 +2191,15 @@
                     <i class="fas fa-vote-yea"></i> Voting
                 </button>
             </div>
-
+<div id="nominees-loader" style="display:none; justify-content:center; align-items:center; padding:20px;">
+  <div class="spinner"></div>
+  <span style="margin-left:10px;">Loading nominees...</span>
+</div>
             <!-- Nominations Tab Content -->
             <div id="nominationsTab" class="admin-tab-content section">
                 <h2><i class="fas fa-clipboard-list"></i> Nomination Management</h2>
+                
+
                 
                 <!-- Nominations Sub-tabs -->
                 <div class="nomination-sub-tabs">
@@ -2261,308 +2266,471 @@
         const storage = firebase.storage();
 
         // Categories with nominees (Nulass Awards)
-        const nominationCategories = {
-            'staylite_of_year': {
-                name: 'Staylite of the Year',
-                nominees: [
-                    { name: 'Bami' },
-                    { name: 'Rabiu' },
-                    { name: 'Hassan Yussuff' },
-                    { name: 'Desire' },
-                    { name: 'Ojikutu Abdullahi Abdulmal' }
-                ]
-            },
-            'nulassite_of_year': {
-                name: 'Nulassite of the Year',
-                nominees: [
-                    { name: 'Olasun Kanmi' },
-                    { name: 'Olotu Moses' },
-                    { name: 'Scarface' },
-                    { name: 'Ojikutu Peace' },
-                    { name: 'Avosegamu' },
-                    { name: 'Awonuga' },
-                    { name: 'Emperor' },
-                    { name: 'Hon. Muhammed Ishola' },
-                    { name: 'Sulamon Oyinlakan' },
-                    { name: 'Onwubadewa Ojikutu' },
-                    { name: 'Bami' },
-                    { name: 'Rotimi Cole' },
-                    { name: 'Peace Onwubadewa' }
-                ]
-            },
-            'executive_of_year': {
-                name: 'Executive of the Year',
-                nominees: [
-                    { name: 'Desire Anjorin' },
-                    { name: 'Ololunosebi' }
-                    
-                ]
-            },
-            'parliamentarian_of_year': {
-                name: 'Parliamentarian of the Year',
-                nominees: [
-                    { name: 'Scarface' },
-                    { name: 'Hameed Bashorun' },
-                    { name: 'Ishola' },
-                    { name: 'Da Silva' },
-                    { name: 'Hon. Ayobami' },
-                    { name: 'Ololunosebi' },
-                    { name: 'Ogunbiyi Yewande' },
-                    { name: 'Justice' },
-                    { name: 'Rashidat Sulamon' },
-                    { name: 'Olasunkanmi Owoyemi' },
-                    { name: 'Hussien Onwonlu' },
-                    { name: 'Hon. Yusuf Olatunji' }
-                ]
-            },
-            'most_supportive': {
-                name: 'Most Supportive',
-                nominees: [
-                    { name: 'Rafahhh (Welfare)' },
-                    { name: 'Owoyemi' },
-                    { name: 'Sulaimon Oyinlakasola' }
-                ]
-            },
-            'clique_of_year': {
-                name: 'Clique of the Year',
-                nominees: [
-                    { name: 'Oluhunosebi' },
-                    { name: 'Babatunde Rufai' },
-                    { name: 'Emperor' }
-                ]
-            },
-            'humanitarian_male': {
-                name: 'Humanitarian of the Year (Male)',
-                nominees: [
-                    { name: 'Emperor' },
-                    { name: 'Babatunde Rufai' },
-                    { name: 'Oluhunosebi' },
-                    { name: 'Ishola' },
-                    { name: 'Bami' },
-                    { name: 'BFA' },
-                    { name: 'Avosegamu Senator' }
-                ]
-            },
-            'humanitarian_female': {
-                name: 'Humanitarian of the Year (Female)',
-                nominees: [
-                    { name: 'Avoseganju Serafon' },
-                    { name: 'Aminat' },
-                    { name: 'Omowunmi Abibat' },
-                    { name: 'Alliuzanaiyan' }
-                ]
-            },
-            'most_active_external': {
-                name: 'Most Active External Campus',
-                nominees: [
-                    { name: 'Ikeya' },
-                    { name: 'Epe' },
-                    { name: 'Ojo' }
-                ]
-            },
-            'alumni_of_year': {
-                name: 'Alumni of the Year',
-                nominees: [
-                    { name: 'Senator Rahmon Saheed' },
-                    { name: 'Adenle Sabur' },
-                    { name: 'Temi Tope' }
-                ]
-            },
-            'couple_of_year': {
-                name: 'Couple of the Year',
-                nominees: [
-                    { name: 'Scar Face and Babe' }
-                ]
-            },
-            'program_of_year': {
-                name: 'Program of the Year',
-                nominees: [
-                    { name: 'Ibile Week' },
-                    { name: 'Epe Legislative Confer' },
-                    { name: 'ELC 4.0' }
-                ]
-            },
-            'most_reserved': {
-                name: 'Most Reserved Nulassite',
-                nominees: [
-                    { name: 'Oluhunosebi' },
-                    { name: 'Omidiji Esther' },
-                    { name: 'Ishola' },
-                    { name: 'Olasunkanmi' },
-                    { name: 'Omowunmi' }
-                ]
-            },
-            'most_popular': {
-                name: 'Most Popular Nulassite',
-                nominees: [
-                    { name: 'Scar Face' },
-                    { name: 'Oluhunosebi' },
-                    { name: 'Abass Mulikat' },
-                    { name: 'Desire' },
-                    { name: 'Emperor' },
-                    { name: 'Akachukwu Ezekiel' }
-                ]
-            },
-            'brand_of_year': {
-                name: 'Brand of the Year',
-                nominees: [
-                    { name: 'Ay Chops' },
-                    { name: 'Rewarder (Ismart DC)' },
-                    { name: 'Olatunwa Shawarma' },
-                    { name: 'Accessories with Aminah' },
-                    { name: 'Faithie Nails' }
-                ]
-            },
-            'entrepreneur_of_year': {
-                name: 'Entrepreneur of the Year',
-                nominees: [
-                    { name: 'Imary Cakes' },
-                    { name: 'Bashorun Idris (Rewarder - Ismart)' },
-                    { name: 'Sir Babatunde Senator Materials' }
-                ]
-            },
-            'most_talented': {
-                name: 'Most Talented Nulassite',
-                nominees: [
-                    { name: 'Phleomzy' },
-                    { name: 'Roferat' },
-                    { name: 'Olokunosebi' },
-                    { name: 'Calculus Boy' },
-                    { name: 'Akachukwu Ezekiel' },
-                    { name: 'Bami' },
-                    { name: 'Overyomi' }
-                ]
-            },
-            'content_creator': {
-                name: 'Content Creator of the Year',
-                nominees: [
-                    { name: 'Aanu Adeniyi' },
-                    { name: 'Oluwagbenga' },
-                    { name: 'Phleomzy' }
-                ]
-            },
-            'division_president': {
-                name: 'Division President of the Year',
-                nominees: [
-                    { name: 'Yussuff Ibraheem' },
-                    { name: 'Crownstar' },
-                    { name: 'Balogun Aminat' },
-                    { name: 'Lanre' },
-                    { name: 'Justice' },
-                    { name: 'Olowolayewo' },
-                    { name: 'Desire' },
-                    { name: 'BFA' }
-                ]
-            },
-            'division_speaker': {
-                name: 'Division Speaker of the Year',
-                nominees: [
-                    { name: 'Maryam Rabi' },
-                    { name: 'Zulaykan' },
-                    { name: 'Ogunbiyi Hafsah' },
-                    { name: 'Akorede' }
-                ]
-            },
-            'political_icon': {
-                name: 'Political Icon',
-                nominees: [
-                    { name: 'Paramole' },
-                    { name: 'Oluhunosebi' },
-                    { name: 'Anjorin Desire' },
-                    { name: 'Ogunbiyi Hafsah' },
-                    { name: 'Hon. Hassan Yusuf Olatunji' },
-                    { name: 'Emperor' },
-                    { name: 'Hon. Muhammed Ishola' }
-                ]
-            },
-            'fresher_male': {
-                name: 'Fresher of the Year (Male)',
-                nominees: [
-                    { name: 'Khalifa' },
-                    { name: 'Oladimeji' },
-                    { name: 'Sharwama' },
-                    { name: 'Babatunde Rufai' },
-                    { name: 'Akachukwu Ezekiel' },
-                    { name: 'Matto' },
-                    { name: 'Ags Nukass' }
-                ]
-            },
-            'socialite_of_year': {
-                name: 'Socialite of the Year',
-                nominees: [
-                    { name: 'Bami' },
-                    { name: 'Calculus Boy' },
-                    { name: 'Oluhunosebi' },
-                    { name: 'Lasisi Ayomide' },
-                    { name: 'Sammy' }
-                ]
-            },
-            'fresher_female': {
-                name: 'Fresher of the Year (Female)',
-                nominees: [
-                    { name: 'Reece Ojikutu' },
-                    { name: 'Nwuko Sharon' },
-                    { name: 'Oyindamola' },
-                    { name: 'Aifamog' }
-                ]
-            },
-            'sportsman_male': {
-                name: 'Sportsman of the Year (Male)',
-                nominees: [
-                    { name: 'Olabunkanmi Awoyemi' },
-                    { name: 'Hakeem' },
-                    { name: 'Balo' },
-                    { name: 'Jago' },
-                    { name: 'Oluhunosebi' },
-                    { name: 'Solo of Lasu' }
-                ]
-            },
-            'sportsman_female': {
-                name: 'Sportsman of the Year (Female)',
-                nominees: [
-                    { name: 'Victoria (Vhee)' },
-                    { name: 'Kaybee' },
-                    { name: 'Ajuwaga Oluwa Tubisiba' },
-                    { name: 'Smiles' },
-                    { name: 'Rabiu Maryam' }
-                ]
-            },
-            'most_beautiful': {
-                name: 'Most Beautiful',
-                nominees: [
-                    { name: 'Nimat' },
-                    { name: 'Omowunmi' },
-                    { name: 'Oyindamola' },
-                    { name: 'Mbadwe Chiamaka' },
-                    { name: 'Khamat Desire' }
-                ]
-            },
-            'friend_of_union': {
-                name: 'Friend of the Union',
-                nominees: [
-                    { name: 'Babatunde Rufai' },
-                    { name: 'Oluhunosebi' },
-                    { name: 'Badmus Aminat' }
-                ]
-            },
-            'staff_adviser': {
-                name: 'Staff Adviser of the Year',
-                nominees: [
-                    { name: 'Dr. Idawu Awoyemi' },
-                    { name: 'Abatan' }
-                ]
-            },
-            'most_active_division': {
-                name: 'Most Active Division',
-                nominees: [
-                    { name: 'Ikorodu' },
-                    { name: 'Badagry' },
-                    { name: 'Ikeja Division' },
-                    { name: 'Epe' },
-                    { name: 'Lagos Division' }
-                ]
-            }
-        };
+const nominationCategories = {
+    'staylite_of_year': {
+        name: 'Staylite of the Year',
+        nominees: [
+            { name: 'Bami' },
+            { name: 'Rabiu' },
+            { name: 'Hassan Yussuff' },
+            { name: 'Desire' },
+            { name: 'Ojikutu Abdullahi Abdulmal' }
+        ]
+    },
+
+    'socialite': {
+        name: 'Socialite of the Year - Epe Campus ',
+        nominees: [
+            { name: 'Mulikat' },
+            { name: 'ZainyPerk' },
+            { name: 'Aizat' },
+            { name: 'Bamzzy' },
+            { name: 'Tande' },
+            { name: 'BFA' },
+            { name: 'Rayman' },
+            { name: 'Ade' },
+            { name: 'Alameen' },
+            { name: 'Classic' }
+        ]
+    },
+
+    'rookie': {
+        name: 'Rookie of the Year - Epe Campus',
+        nominees: [
+            { name: 'Dhikr' },
+            { name: 'Fatimah Egusi' },
+            { name: 'Alu Zainab' },
+            { name: 'Abdul Kofoworola' }
+        ]
+    },
+
+    'nulassite_of_year': {
+        name: 'Nulassite of the Year',
+        nominees: [
+            { name: 'Olasun Kanmi' },
+            { name: 'Olotu Moses' },
+            { name: 'Scarface' },
+            { name: 'Ojikutu Peace' },
+            { name: 'Avosegamu' },
+            { name: 'Awonuga' },
+            { name: 'Emperor' },
+            { name: 'Hon. Muhammed Ishola' },
+            { name: 'Sulamon Oyinlakan' },
+            { name: 'Onwubadewa Ojikutu' },
+            { name: 'Bami' },
+            { name: 'Rotimi Cole' },
+            { name: 'Peace Onwubadewa' }
+        ]
+    },
+
+    'executive_of_year': {
+        name: 'Executive of the Year',
+        nominees: [
+            { name: 'Desire Anjorin' },
+            { name: 'Ololunosebi' }
+        ]
+    },
+
+    'executive': {
+        name: 'Executive of the Year',
+        nominees: [
+            { name: 'Hafsah' },
+            { name: 'Bolanle' },
+            { name: 'ZainyPerk' },
+            { name: 'Bamzzy' },
+            { name: 'BFA' },
+            { name: 'Adeyeri' },
+            { name: 'Alameen' }
+        ]
+    },
+
+    'parliamentarian_of_year': {
+        name: 'Parliamentarian of the Year',
+        nominees: [
+            { name: 'Scarface' },
+            { name: 'Hameed Bashorun' },
+            { name: 'Ishola' },
+            { name: 'Da Silva' },
+            { name: 'Hon. Ayobami' },
+            { name: 'Ololunosebi' },
+            { name: 'Ogunbiyi Yewande' },
+            { name: 'Justice' },
+            { name: 'Rashidat Sulamon' },
+            { name: 'Olasunkanmi Owoyemi' },
+            { name: 'Hussien Onwonlu' },
+            { name: 'Hon. Yusuf Olatunji' }
+        ]
+    },
+
+    'most_supportive': {
+        name: 'Most Supportive',
+        nominees: [
+            { name: 'Rafahhh (Welfare)' },
+            { name: 'Owoyemi' },
+            { name: 'Sulaimon Oyinlakasola' }
+        ]
+    },
+
+    'clique_of_year': {
+        name: 'Clique of the Year',
+        nominees: [
+            { name: 'Oluhunosebi' },
+            { name: 'Babatunde Rufai' },
+            { name: 'Emperor' }
+        ]
+    },
+
+    'mostExpensive': {
+        name: 'Most Expensive - Epe Campus',
+        nominees: [
+            { name: 'Teddy' },
+            { name: 'Classic' },
+            { name: 'Tande' },
+            { name: 'BFA' },
+            { name: 'Bamzzy' },
+            { name: 'Azeza' },
+            { name: 'Yung' },
+            { name: 'Abdulazeez Abass' }
+        ]
+    },
+
+    'humanitarian_male': {
+        name: 'Humanitarian of the Year (Male)',
+        nominees: [
+            { name: 'Emperor' },
+            { name: 'Babatunde Rufai' },
+            { name: 'Oluhunosebi' },
+            { name: 'Ishola' },
+            { name: 'Bami' },
+            { name: 'BFA' },
+            { name: 'Avosegamu Senator' }
+        ]
+    },
+
+    'humanitarian_female': {
+        name: 'Humanitarian of the Year (Female)',
+        nominees: [
+            { name: 'Avoseganju Serafon' },
+            { name: 'Aminat' },
+            { name: 'Omowunmi Abibat' },
+            { name: 'Alliuzanaiyan' }
+        ]
+    },
+
+    'humanitarian': {
+        name: 'Humanitarian of the Year - Epe Campus',
+        nominees: [
+            { name: 'BFA' },
+            { name: 'Egi' },
+            { name: 'Kuti' },
+            { name: 'Bamzzy' },
+            { name: 'Zainyperk' },
+            { name: 'Aliu Zainab' }
+        ]
+    },
+
+    'most_active_external': {
+        name: 'Most Active External Campus',
+        nominees: [
+            { name: 'Ikeya' },
+            { name: 'Epe' },
+            { name: 'Ojo' }
+        ]
+    },
+
+    'finalist': {
+        name: 'Finalist of the Year - Epe Campus',
+        nominees: [
+            { name: 'Maryam' },
+            { name: 'Omofo' },
+            { name: 'Rabiu Hameedat' },
+            { name: 'Azezat' },
+            { name: 'Adams' },
+            { name: 'Jasmine' },
+            { name: 'Adam the first' },
+            { name: 'Balogun Farouk' }
+        ]
+    },
+
+    'alumni_of_year': {
+        name: 'Alumni of the Year',
+        nominees: [
+            { name: 'Senator Rahmon Saheed' },
+            { name: 'Adenle Sabur' },
+            { name: 'Temi Tope' }
+        ]
+    },
+
+    'couple_of_year': {
+        name: 'Couple of the Year',
+        nominees: [
+            { name: 'Scar Face and Babe' }
+        ]
+    },
+
+    'program_of_year': {
+        name: 'Program of the Year',
+        nominees: [
+            { name: 'Ibile Week' },
+            { name: 'Epe Legislative Confer' },
+            { name: 'ELC 4.0' }
+        ]
+    },
+
+    'most_reserved': {
+        name: 'Most Reserved Nulassite',
+        nominees: [
+            { name: 'Oluhunosebi' },
+            { name: 'Omidiji Esther' },
+            { name: 'Ishola' },
+            { name: 'Olasunkanmi' },
+            { name: 'Omowunmi' }
+        ]
+    },
+
+    'most_popular': {
+        name: 'Most Popular Nulassite',
+        nominees: [
+            { name: 'Scar Face' },
+            { name: 'Oluhunosebi' },
+            { name: 'Abass Mulikat' },
+            { name: 'Desire' },
+            { name: 'Emperor' },
+            { name: 'Akachukwu Ezekiel' }
+        ]
+    },
+
+    'mostPopular': {
+        name: 'Most Popular Student - Epe Campus',
+        nominees: [
+            { name: 'Mulikat' },
+            { name: 'Azezat' },
+            { name: 'T and C' },
+            { name: 'BFG' },
+            { name: 'Bamzzy' },
+            { name: 'Zainy Perk' }
+        ]
+    },
+
+    'scholar': {
+        name: 'Scholar of the Year - Epe Campus',
+        nominees: [
+            { name: 'Openipo' },
+            { name: 'Classic' },
+            { name: 'Zainy Rock' },
+            { name: 'Bamzzy' },
+            { name: 'Alu Zainab' },
+            { name: 'Oloade' },
+            { name: 'BFA' }
+        ]
+    },
+
+      'brand_of_year': {
+        name: 'Brand of the Year',
+        nominees: [
+            { name: 'Ay Chops' },
+            { name: 'Rewarder (Ismart DC)' },
+            { name: 'Olatunwa Shawarma' },
+            { name: 'Accessories with Aminah' },
+            { name: 'Faithie Nails' }
+        ]
+    },
+
+    'entrepreneur_of_year': {
+        name: 'Entrepreneur of the Year',
+        nominees: [
+            { name: 'Imary Cakes' },
+            { name: 'Bashorun Idris (Rewarder - Ismart)' },
+            { name: 'Sir Babatunde Senator Materials' }
+        ]
+    },
+
+    'most_talented': {
+        name: 'Most Talented Nulassite',
+        nominees: [
+            { name: 'Phleomzy' },
+            { name: 'Roferat' },
+            { name: 'Olokunosebi' },
+            { name: 'Calculus Boy' },
+            { name: 'Akachukwu Ezekiel' },
+            { name: 'Bami' },
+            { name: 'Overyomi' }
+        ]
+    },
+
+    'content_creator': {
+        name: 'Content Creator of the Year',
+        nominees: [
+            { name: 'Aanu Adeniyi' },
+            { name: 'Oluwagbenga' },
+            { name: 'Phleomzy' }
+        ]
+    },
+
+    'division_president': {
+        name: 'Division President of the Year',
+        nominees: [
+            { name: 'Yussuff Ibraheem' },
+            { name: 'Crownstar' },
+            { name: 'Balogun Aminat' },
+            { name: 'Lanre' },
+            { name: 'Justice' },
+            { name: 'Olowolayewo' },
+            { name: 'Desire' },
+            { name: 'BFA' }
+        ]
+    },
+
+    'division_speaker': {
+        name: 'Division Speaker of the Year',
+        nominees: [
+            { name: 'Maryam Rabi' },
+            { name: 'Zulaykan' },
+            { name: 'Ogunbiyi Hafsah' },
+            { name: 'Akorede' }
+        ]
+    },
+
+    'political_icon_main': {
+        name: 'Political Icon',
+        nominees: [
+            { name: 'Paramole' },
+            { name: 'Oluhunosebi' },
+            { name: 'Anjorin Desire' },
+            { name: 'Ogunbiyi Hafsah' },
+            { name: 'Hon. Hassan Yusuf Olatunji' },
+            { name: 'Emperor' },
+            { name: 'Hon. Muhammed Ishola' }
+        ]
+    },
+
+    'political_icon_epe': {
+        name: 'Political Icon - Epe Campus',
+        nominees: [
+            { name: 'Mulikat' },
+            { name: 'Nani' },
+            { name: 'ZainyPerk' },
+            { name: 'Aizat' },
+            { name: 'Bamzzy' },
+            { name: 'Balogun' },
+            { name: 'BFA' },
+            { name: 'Rabiuhan' },
+            { name: 'Farouq Balogun' }
+        ]
+    },
+
+    'fresher_male': {
+        name: 'Fresher of the Year (Male)',
+        nominees: [
+            { name: 'Khalifa' },
+            { name: 'Oladimeji' },
+            { name: 'Sharwama' },
+            { name: 'Babatunde Rufai' },
+            { name: 'Akachukwu Ezekiel' },
+            { name: 'Matto' },
+            { name: 'Ags Nukass' }
+        ]
+    },
+
+    'socialite_of_year': {
+        name: 'Socialite of the Year',
+        nominees: [
+            { name: 'Bami' },
+            { name: 'Calculus Boy' },
+            { name: 'Oluhunosebi' },
+            { name: 'Lasisi Ayomide' },
+            { name: 'Sammy' }
+        ]
+    },
+
+    'fresher_female': {
+        name: 'Fresher of the Year (Female)',
+        nominees: [
+            { name: 'Reece Ojikutu' },
+            { name: 'Nwuko Sharon' },
+            { name: 'Oyindamola' },
+            { name: 'Aifamog' }
+        ]
+    },
+
+    'sportsman_male': {
+        name: 'Sportsman of the Year (Male)',
+        nominees: [
+            { name: 'Olabunkanmi Awoyemi' },
+            { name: 'Hakeem' },
+            { name: 'Balo' },
+            { name: 'Jago' },
+            { name: 'Oluhunosebi' },
+            { name: 'Solo of Lasu' }
+        ]
+    },
+
+    'sportsman_female': {
+        name: 'Sportsman of the Year (Female)',
+        nominees: [
+            { name: 'Victoria (Vhee)' },
+            { name: 'Kaybee' },
+            { name: 'Ajuwaga Oluwa Tubisiba' },
+            { name: 'Smiles' },
+            { name: 'Rabiu Maryam' }
+        ]
+    },
+
+    'sportsman': {
+        name: 'Sportsman of the Year - Epe Campus',
+        nominees: [
+            { name: 'Bolarinwa' },
+            { name: 'Tunde' },
+            { name: 'Classic' },
+            { name: 'Zainyperk' },
+            { name: 'Lynx' },
+            { name: 'Ilias' },
+            { name: 'Emmanuel' },
+            { name: 'BFA' },
+            { name: 'Azezat' }
+        ]
+    },
+
+    'most_beautiful': {
+        name: 'Most Beautiful',
+        nominees: [
+            { name: 'Nimat' },
+            { name: 'Omowunmi' },
+            { name: 'Oyindamola' },
+            { name: 'Mbadwe Chiamaka' },
+            { name: 'Khamat Desire' }
+        ]
+    },
+
+    'friend_of_union': {
+        name: 'Friend of the Union',
+        nominees: [
+            { name: 'Babatunde Rufai' },
+            { name: 'Oluhunosebi' },
+            { name: 'Badmus Aminat' }
+        ]
+    },
+
+    'staff_adviser': {
+        name: 'Staff Adviser of the Year',
+        nominees: [
+            { name: 'Dr. Idawu Awoyemi' },
+            { name: 'Abatan' }
+        ]
+    },
+
+    'most_active_division': {
+        name: 'Most Active Division',
+        nominees: [
+            { name: 'Ikorodu' },
+            { name: 'Badagry' },
+            { name: 'Ikeja Division' },
+            { name: 'Epe' },
+            { name: 'Lagos Division' }
+        ]
+    }
+};
+
 
         // Global Variables
         let currentUser = null;
@@ -3826,6 +3994,27 @@
                 showAlert('Error downloading image: ' + error.message, 'error');
             }
         }
+// Loader toggle
+function showNomineeLoader(show) {
+  const loader = document.getElementById("nominees-loader");
+  if (loader) loader.style.display = show ? "flex" : "none";
+}
+
+// Fetch nominees for admin
+async function loadNomineesFromFirestore() {
+  const snapshot = await getDocs(collection(db, "nominees"));
+  let categories = {};
+  
+  snapshot.forEach(doc => {
+    const data = doc.data();
+    if (!categories[data.category]) {
+      categories[data.category] = { name: data.category, nominees: [] };
+    }
+    categories[data.category].nominees.push({ name: data.name });
+  });
+
+  return categories;
+}
 
         // Load Voting Statistics
         async function loadVotingStats() {
@@ -3861,3 +4050,4 @@
     </script>
 </body>
 </html>
+

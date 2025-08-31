@@ -2015,94 +2015,76 @@
         </div>
 
         <!-- Payment Section -->
-        <div id="paymentSection" class="section" style="display: none;">
-            <h2><i class="fas fa-credit-card"></i> Payment & Submission</h2>
-            
-            <!-- Payment Summary -->
-            <div class="payment-section">
-                <h3><i class="fas fa-calculator"></i> Payment Summary</h3>
-                <div class="payment-item">
-                    <span>Base Fee (per category):</span>
-                    <span>₦1,000.00</span>
-                </div>
-                <div class="payment-item">
-                    <span>Selected Categories:</span>
-                    <span id="categoryCount">1</span>
-                </div>
-                <div class="payment-item">
-                    <span>Subtotal:</span>
-                    <span>₦<span id="subtotalAmount">1,000</span></span>
-                </div>
-                <div class="payment-item">
-                    <span>Service Charge (₦50 per category):</span>
-                    <span>₦<span id="serviceFeeAmount">50</span></span>
-                </div>
-                <div class="payment-item">
-                    <span>Processing Fee (₦100 per category):</span>
-                    <span>₦<span id="processingFeeAmount">100</span></span>
-                </div>
-                <div class="payment-item">
-                    <span>Total Amount:</span>
-                    <span>₦<span id="totalAmount">1,150</span></span>
-                </div>
-            </div>
+<div id="paymentSection" class="section" style="display:none; font-family:Arial, sans-serif; font-size:14px; color:#333; padding:15px; border:1px solid #ddd; border-radius:10px; background:#f9f9f9;">
 
-            <!-- Bank Transfer Details -->
-            <div class="payment-section">
-                <h3><i class="fas fa-university"></i> Bank Transfer Details</h3>
-                <div class="payment-item">
-                    <span>Bank Name:</span>
-                    <span>GTBank/span>
-                </div>
-                <div class="payment-item">
-                    <span>Account Name:</span>
-                    <span>Salisu Rofiat Oyindamola</span>
-                </div>
-                <div class="payment-item">
-                    <span>Account Number:</span>
-                    <span>0656350237</span>
-                </div>
-                <div class="payment-item">
-                    <span>Transfer Amount:</span>
-                    <span>₦<span id="bankTransferAmount">1,150</span></span>
-                </div>
-            </div>
+  <h2 style="margin-bottom:15px;">
+    <i class="fas fa-credit-card"></i> Payment & Submission
+  </h2>
 
-            <!-- Payment Screenshot Upload - REQUIRED -->
-            <div class="payment-section">
-                <h3><i class="fas fa-camera"></i> Payment Verification (REQUIRED)</h3>
-                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 20px;">
-                    <strong>Upload screenshot of your bank transfer confirmation - THIS IS MANDATORY</strong>
-                </p>
-                <div class="form-group">
-                    <label>Payment Screenshot *</label>
-                    <div class="file-upload-wrapper">
-                        <input type="file" id="paymentScreenshot" class="file-upload" accept="image/*" required>
-                        <div class="file-upload-btn">
-                            <i class="fas fa-camera"></i>
-                            Upload Payment Screenshot (Required)
-                        </div>
-                    </div>
-                    <div id="screenshotPreview"></div>
-                </div>
-            </div>
+  <!-- Horizontal Payment Details -->
+  <div class="payment-section" style="margin-bottom:20px;">
+    <h3><i class="fas fa-university"></i> Payment Details</h3>
+    
+    <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center; font-size:13px; background:#fff; border:1px solid #ccc; padding:10px; border-radius:8px;">
+      <div><strong>Base Fee:</strong> ₦1,000</div>
+      <div><strong>Category(s):</strong> <span id="categoryCount">1</span></div>
+      <div><strong>Subtotal:</strong> ₦<span id="subtotalAmount">1,000</span></div>
+      <div><strong>Service Fee:</strong> ₦<span id="serviceFeeAmount">50</span></div>
+      <div><strong>Processing Fee:</strong> ₦<span id="processingFeeAmount">100</span></div>
+      <div style="font-weight:bold; color:#000;"><strong>Total:</strong> ₦<span id="totalAmount">1,150</span></div>
+    </div>
 
-            <div class="section-buttons">
-                <button class="btn btn-secondary" onclick="goBackToDetails()">
-                    <i class="fas fa-arrow-left"></i> Back to Details
-                </button>
-                <button id="submitNomination" class="btn" onclick="handleSubmission()">
-                    <i class="fas fa-paper-plane"></i> Submit Nomination
-                </button>
-            </div>
-        </div>
-<p>
-    for any problem dm +234 8029941678 Just say Nulass for quick response</p>
+    <!-- Highlighted Transfer to Bank -->
+    <div style="margin-top:12px; padding:10px; border-radius:8px; background:#fff8e1; border:1px solid #f4c542; font-size:14px; font-weight:bold; color:#333;">
+      <i class="fas fa-university" style="margin-right:6px; color:#d48806;"></i> 
+      Transfer to Bank: 
+<span style="color:#000;">GTBank</span>
+<span style="color:#000;">
+    Salisu Rofiat Oyindamola:</span>
+ <span style="color:#000;">0656350237</span>  
+      Amount: ₦<span id="bankTransferAmount">1,150</span>
+    </div>
+  </div>
+
+  <!-- Upload Screenshot -->
+  <div class="payment-section" style="margin-bottom:20px;">
+    <h3><i class="fas fa-camera"></i> Payment Verification</h3>
+    <p style="font-size:13px; margin:5px 0 10px; opacity:0.8;">
+      Please <strong>upload your bank transfer screenshot</strong> to confirm payment.
+    </p>
+    <label for="paymentScreenshot" style="display:inline-block; cursor:pointer; padding:12px 18px; border:2px dashed #aaa; border-radius:8px; background:#fff; text-align:center;">
+      <i class="fas fa-camera" style="font-size:18px; margin-right:8px; color:#555;"></i>
+      <span>Click to Upload Screenshot</span>
+    </label>
+    <input type="file" id="paymentScreenshot" class="file-upload" accept="image/*" required style="display:none;">
+    <div id="screenshotPreview" style="margin-top:10px;"></div>
+  </div>
+
+  <!-- Buttons -->
+  <div class="section-buttons" style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn btn-secondary" onclick="goBackToDetails()">
+      <i class="fas fa-arrow-left"></i> Back
+    </button>
+    <button id="submitNomination" class="btn" onclick="handleSubmission()">
+      <i class="fas fa-paper-plane"></i> Submit
+    </button>
+  </div>
+
+</div>
+
         <!-- Loading Screen -->
         <div id="loadingScreen" class="loading">
             <div class="spinner"></div>
             <p>Processing your nomination...</p>
         </div>
+
+      <div style="border:1px solid #ddd; padding:15px; border-radius:10px; background-color:#f9f9f9; font-family:Arial, sans-serif; font-size:14px; line-height:1.6; color:#333;">
+  <p style="margin:0 0 10px 0; font-weight:bold; font-size:15px;">Instructions:</p>
+  <ol style="margin:0; padding-left:20px;">
+    <li style="margin-bottom:8px;">For submission problems, check the size of the image uploaded. It must not be higher than <strong>2MB</strong>.</li>
+    <li>For any problem, DM <strong>+234 8029941678</strong>. Just say <strong>"Nulass"</strong> for a quick response.</li>
+  </ol>
+</div>
 
         <!-- Fixed Selection Counter -->
         <div id="fixedCounter" class="fixed-counter">

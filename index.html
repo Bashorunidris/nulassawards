@@ -2084,8 +2084,8 @@ function validateForm() {
         return false;
     }
 
-    if (voteCount > 100) {
-        showAlert('Maximum 100 votes allowed per transaction', 'error');
+    if (voteCount > 9000) {
+        showAlert('Maximum 10000 votes allowed per transaction', 'error');
         return false;
     }
 
@@ -2419,4 +2419,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </script>
    </body>
-    </html>
+</html>

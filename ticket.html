@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Get Ticket</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f9f9f9;
+      color: #333;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .event-img {
+      width: 100%;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    iframe {
+      width: 100%;
+      height: 200px;
+      border: none;
+      border-radius: 12px;
+      margin-bottom: 15px;
+    }
+
+    .info {
+      margin: 10px 0;
+      font-size: 1rem;
+    }
+
+    .countdown-box {
+      text-align: center;
+      background: #B7410E;
+      color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      margin: 15px 0;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    select, button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+
+    button {
+      background: #B7410E;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #a0390c;
+    }
+
+    .back-btn {
+      margin-top: 15px;
+      background: #555;
+    }
+
+    .back-btn:hover {
+      background: #333;
+    }
+
+    .copy-btn {
+      background: #444;
+      color: #fff;
+      padding: 6px 12px;
+      font-size: 0.9rem;
+      margin-left: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* Popup */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .popup-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 400px;
+      text-align: center;
+      transform: scale(0.8);
+      opacity: 0;
+      animation: scaleIn 0.5s forwards;
+    }
+
+    @keyframes scaleIn {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .loading {
+      margin: 15px 0;
+      font-weight: bold;
+      color: #B7410E;
+      font-size: 1.2rem;
+    }
+
+    .hidden {
+      display: none;
+    }
+    
+    .account-box {
+  background: #fff7f3;
+  border: 1px solid #ffd5c2;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.account-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+.account-details {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 1.05rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.account-holder {
+  margin-top: 8px;
+  font-size: 0.95rem;
+  color: #666;
+}
+
+.account-holder .bank {
+  font-weight: bold;
+  color: #B7410E;
+}
+
+.copy-btn {
+  background: #B7410E;
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  margin-left: 10px;
+}
+
+.copy-btn:hover {
+  background: #a0390c;
+}
+.event-info {
+  background: #fff7f3;
+  border: 1px solid #ffd5c2;
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 15px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+}
+
+.info-row {
+  font-size: 1.05rem;
+  color: #444;
+  margin: 8px 0;
+  display: flex;
+  align-items: center;
+}
+
+.info-row .label {
+  font-weight: 600;
+  margin-left: 5px;
+  color: #B7410E;
+}
+
+/* Ticket section */
+.ticket-section {
+  margin-top: 20px;
+}
+
+.ticket-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: #333;
+}
+
+.ticket-dropdown {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+.ticket-dropdown:focus {
+  outline: none;
+  border: 1px solid #B7410E;
+  box-shadow: 0 0 6px rgba(183,65,14,0.3);
+}
+.ticket-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.ticket-card {
+  background: linear-gradient(145deg, #fff 0%, #f9f9f9 100%);
+  border: 2px solid #eee;
+  border-radius: 16px;
+  padding: 20px 15px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  box-shadow: 4px 4px 12px rgba(0,0,0,0.12),
+              -4px -4px 12px rgba(255,255,255,0.8);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform: perspective(600px) rotateX(0deg);
+}
+
+.ticket-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.15);
+  transform: scale(1);
+  transition: transform 0.3s ease;
+}
+
+.ticket-card span {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #B7410E;
+  font-weight: bold;
+}
+
+.ticket-card:hover {
+  transform: perspective(600px) rotateX(5deg) scale(1.05);
+  border-color: #B7410E;
+  box-shadow: 6px 6px 16px rgba(0,0,0,0.18),
+              -6px -6px 16px rgba(255,255,255,0.9);
+}
+
+.ticket-card:hover .ticket-icon {
+  transform: scale(1.2) rotate(-5deg);
+}
+
+.ticket-card.active {
+  border-color: #B7410E;
+  background: linear-gradient(145deg, #fff7f3, #ffe3d6);
+  box-shadow: inset 4px 4px 10px rgba(0,0,0,0.08),
+              inset -4px -4px 10px rgba(255,255,255,0.9);
+  transform: scale(1.05);
+}
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.close-btn:hover {
+  color: #B7410E;
+}
+
+.popup-content {
+  position: relative; /* required for close button */
+}
+
+  </style>
+</head>
+<body>
+
+  <div class="container">
+   
+<img src="https://i.ibb.co/MxqtGqbZ/9cf4d3ca16ff4f899db5aa1b149750dd-1.jpg" class="event-img" alt="Event">
+    <iframe 
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3944.560252062914!2d3.349999!3d6.500000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b8aa9cfb764b1%3A0x19e44c6b74a58575!2sEko%20Club!5e0!3m2!1sen!2sng!4v1694444400000!5m2!1sen!2sng" 
+  width="100%" 
+  height="250" 
+  style="border:0; border-radius:12px;" 
+  allowfullscreen="" 
+  loading="lazy" 
+  referrerpolicy="no-referrer-when-downgrade">
+</iframe>
+
+
+    <!-- Countdown Timer -->
+    <div class="countdown-box" id="eventCountdown">
+      Event starts in: Loading...
+    </div>
+
+    <div class="event-info">
+  <div class="info-row">📍 <span class="label">Location:</span> LASU, Ojo, Lagos State</div>
+  <div class="info-row">📅 <span class="label">Date:</span> Friday, 26th Sept 2025</div>
+  <div class="info-row">⏰ <span class="label">Time:</span> 5:00PM</div>
+</div>
+
+<div class="ticket-section">
+  <div class="ticket-label">🎟️ Select Ticket Type:</div>
+  <div class="ticket-options">
+    <div class="ticket-card" data-price="5000">
+      <div class="ticket-icon">🎟️</div>
+      Regular <span>₦5,000</span>
+    </div>
+    <div class="ticket-card" data-price="9000">
+      <div class="ticket-icon">❤️</div>
+      Couples <span>₦9,000</span>
+    </div>
+    <div class="ticket-card" data-price="50000">
+      <div class="ticket-icon">👫</div>
+      Table for 2 <span>₦50,000</span>
+    </div>
+    <div class="ticket-card" data-price="100000">
+      <div class="ticket-icon">🥂🥂</div>
+      Table for 4 <span>₦100,000</span>
+    </div>
+    <div class="ticket-card" data-price="200000">
+      <div class="ticket-icon">🍻🍾🍾</div>
+      Table for 6 <span>₦200,000</span>
+    </div>
+  </div>
+</div>
+
+<input type="hidden" id="ticketSelect" />
+<div class="info account-box">
+  <div class="account-details">
+    🏦 <span class="label">Account:</span> 
+    <b id="accountNumber">0656350237</b>
+    <button class="copy-btn" onclick="copyAccount()">📋 Copy</button>
+  </div>
+  <div class="account-holder">
+    Salisu Rofiat Oyindamola – <span class="bank">GTBank</span>
+  </div>
+</div>
+
+
+    
+    <button id="payBtn">Process Payment</button>
+    <button class="back-btn" onclick="window.location.href='index.html'">⬅️ Back to Home</button>
+  </div>
+  </select>
+</div>
+
+
+   
+  <!-- Powered By -->
+        <div style="text-align: center; margin-top: 40px; padding: 30px; opacity: 0.8;">
+            <img src="https://i.ibb.co/HpBDMgvM/REWARDER-20250901-173722-0000.png"  alt="Rewarder Logo" style="width: 100px; height: auto; margin-bottom: 15px; border-radius: 50%;">
+            <p><strong>Powered by Rewarder</strong></p>
+        </div>
+<!-- Popup -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <span class="close-btn" id="closePopup">&times;</span>
+    <div class="loading" id="countdownText">⏳ Processing payment... 30s remaining</div>
+    <div id="instructions" class="hidden">
+      ✅ After payment, please copy and paste the text below into WhatsApp:
+    </div>
+    <p id="copyText" class="hidden">"I just paid for a ticket, this is a screenshot"</p>
+    <button class="copy-btn hidden" id="copyBtn">📋 Copy Text</button>
+  </div>
+</div>
+
+  </div>
+
+  <script>
+    
+ // Payment popup logic
+const payBtn = document.getElementById("payBtn");
+const popup = document.getElementById("popup");
+const copyBtn = document.getElementById("copyBtn");
+const countdownText = document.getElementById("countdownText");
+const instructions = document.getElementById("instructions");
+const copyText = document.getElementById("copyText");
+const closePopup = document.getElementById("closePopup");
+
+let timer; // make timer accessible
+
+payBtn.addEventListener("click", () => {
+  popup.style.display = "flex";
+
+  let timeLeft = 30;
+  countdownText.style.display = "block";
+  instructions.classList.add("hidden");
+  copyText.classList.add("hidden");
+  copyBtn.classList.add("hidden");
+
+  countdownText.textContent = `⏳ Go and make payment to 0656350237 ... ${timeLeft}s remaining`;
+
+  timer = setInterval(() => {
+    timeLeft--;
+    countdownText.textContent = `⏳ Go and make payment to 0656350237 ... ${timeLeft}s remaining`;
+
+    if (timeLeft <= 0) {
+      clearInterval(timer);
+      countdownText.style.display = "none";
+      instructions.classList.remove("hidden");
+      copyText.classList.remove("hidden");
+      copyBtn.classList.remove("hidden");
+
+      // Redirect after pause
+      setTimeout(() => {
+        window.location.href = "https://wa.me/message/4QFKZC4F22UQM1";
+      }, 3000);
+    }
+  }, 1000);
+});
+
+// Cancel popup
+closePopup.addEventListener("click", () => {
+  popup.style.display = "none";
+  clearInterval(timer); // stop countdown
+});
+
+// Copy button
+copyBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText("I just paid for a ticket, this is a screenshot");
+  alert("Copied to clipboard!");
+});
+
+  </script>
+
+</body>
+</html>

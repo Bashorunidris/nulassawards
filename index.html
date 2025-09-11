@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nulass Dinner Night & Award - Nomination System</title>
+    <title>Nulass Dinner Night & Award - Voting System</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
     <style>
         * {
             margin: 0;
@@ -146,159 +147,48 @@
 
         /* Banner Styles */
         .banner-section {
-            margin-bottom: 40px;
+            margin-bottom: clamp(20px, 5vw, 40px);
             overflow: hidden;
-            border-radius: 15px;
+            border-radius: clamp(8px, 3vw, 15px);
+            position: relative;
+            width: 100%;
         }
 
         .banner-carousel {
             display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 20px 0;
-            scroll-behavior: smooth;
+            gap: clamp(10px, 3vw, 20px);
+            animation: autoScroll 15s linear infinite;
+            width: calc(var(--banner-width) * 6);
+            will-change: transform;
         }
 
-        .banner-carousel::-webkit-scrollbar {
-            height: 8px;
+        :root {
+            --banner-width: clamp(250px, 60vw, 380px);
+            --banner-height: clamp(140px, 35vw, 220px);
         }
 
-        .banner-carousel::-webkit-scrollbar-track {
-            background: rgba(183, 65, 14, 0.1);
-            border-radius: 4px;
-        }
-
-        .banner-carousel::-webkit-scrollbar-thumb {
-            background: #B7410E;
-            border-radius: 4px;
+        @keyframes autoScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .banner-item {
             flex: 0 0 auto;
-            width: 380px;
+            width: var(--banner-width);
+            position: relative;
         }
 
         .banner-item img {
             width: 100%;
-            height: 220px;
+            height: var(--banner-height);
             object-fit: cover;
-            border-radius: 15px;
-            border: 3px solid rgba(183, 65, 14, 0.3);
+            border-radius: clamp(8px, 2vw, 15px);
+            border: clamp(1px, 0.5vw, 3px) solid rgba(183, 65, 14, 0.3);
             transition: all 0.3s ease;
+            display: block;
         }
 
-        .banner-item img:hover {
-            transform: scale(1.05);
-            border-color: #ba6123;
-        }
-
-        /* Progress Steps */
-        .progress-steps {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 60px;
-            position: relative;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .progress-steps::before {
-            content: '';
-            position: absolute;
-            top: 25px;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, 
-                rgba(183, 65, 14, 0.2) 0%, 
-                rgba(186, 97, 35, 0.2) 50%, 
-                rgba(185, 71, 0, 0.2) 100%);
-            border-radius: 2px;
-            z-index: 1;
-        }
-
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            color: rgba(51, 51, 51, 0.6);
-            font-weight: 600;
-            flex: 1;
-            position: relative;
-            z-index: 2;
-        }
-
-        .step.active {
-            color: #B7410E;
-        }
-
-        .step.active .step-number {
-            background: linear-gradient(135deg, #B7410E, #ba6123);
-            color: white;
-            transform: scale(1.2);
-            box-shadow: 
-                0 10px 25px rgba(183, 65, 14, 0.4),
-                0 0 0 8px rgba(183, 65, 14, 0.1);
-        }
-
-        .step.completed {
-            color: #28a745;
-        }
-
-        .step.completed .step-number {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-            transform: scale(1.1);
-        }
-
-        .step-number {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 3px solid currentColor;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 12px;
-            font-weight: bold;
-            font-size: 18px;
-            background: white;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .step-text {
-            font-size: 0.9rem;
-            text-align: center;
-            margin-top: 8px;
-            max-width: 120px;
-        }
-
-        /* Alert Styles */
-        .alert {
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            border-left: 4px solid;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .alert-info {
-            background: linear-gradient(135deg, rgba(183, 65, 14, 0.1) 0%, rgba(186, 97, 35, 0.05) 100%);
-            border-left-color: #B7410E;
-            color: #333;
-        }
-
-        .alert i {
-            font-size: 1.1rem;
-            opacity: 0.8;
-        }
-
-        /* Form Styles */
+        /* Section Styles */
         .section {
             background: 
                 linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
@@ -346,27 +236,512 @@
             margin-left: 20px;
         }
 
+
+
+
+/* Category Card */
+.category-card {
+  flex: 1 1 300px;
+  max-width: 350px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.category-title {
+  background: linear-gradient(135deg, #B7410E, #ba6123);
+  color: #fff;
+  font-size: 1.2rem;
+  font-weight: 600;
+  padding: 14px;
+  text-align: center;
+}
+
+/* Nominee */
+.nominee-item {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 12px 15px;
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background 0.3s ease;
+}
+
+.nominee-item:hover {
+  background: #e9ecef;
+}
+
+.nominee-name {
+  font-weight: 500;
+}
+
+.nominee-votes {
+  background: #B7410E;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+
+/* Category Card */
+.category-card {
+  flex: 0 0 320px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  overflow: hidden;
+  scroll-snap-align: center;
+  transition: all .3s ease;
+  background: linear-gradient(145deg, #ffffff, #f9fafe);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+.category-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+.category-card.expanded {
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+
+/* Category Header */
+.category-card .category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px;
+  background: linear-gradient(90deg, #005bea, #00c6fb);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.category-card .toggle-icon {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+/* Nominees Container (slide down) */
+.category-card .nominees-list {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .45s cubic-bezier(.2,.9,.3,1), opacity .35s ease;
+  padding: 0 14px;
+  background: #fff;
+}
+.category-card .nominees-list.open {
+  max-height: 600px;
+  opacity: 1;
+  padding: 16px;
+}
+
+/* Horizontal Row for Nominees */
+.nominees-row {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+.nominees-row::-webkit-scrollbar { display: none; }
+
+/* Nominee Item */
+.nominee-item {
+  flex: 0 0 200px;
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+  transition: all .25s ease;
+}
+.nominee-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.12);
+}
+.nominee-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+}
+.nominee-votes {
+  font-size: 0.85rem;
+  background: linear-gradient(45deg,#ff6a00,#ee0979);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 20px;
+  align-self: flex-start;
+  font-weight: 500;
+}
+
+/* Highlighted Search Match */
+.nominee-item.highlight {
+  outline: 3px solid #fcd34d;
+  box-shadow: 0 12px 28px rgba(251,191,36,0.3);
+}
+
+
+/* ---------------------------
+   Category Scroll Arrows
+   --------------------------- */
+.cat-scroll-btn {
+  position: fixed;
+  top: 45%;
+  z-index: 1200;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(45deg,#005bea,#00c6fb);
+  color: white;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+#catLeftBtn { left: 16px; }
+#catRightBtn { right: 16px; }
+.cat-scroll-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.25);
+}
+@media (max-width:900px) {
+  .cat-scroll-btn { display:none; }
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 20px auto;
+  max-width: 800px;
+  position: relative;
+}
+
+/* 🔍 Search Bar Container */
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 14px;
+  padding: 6px 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  margin: 10px auto;
+}
+
+.search-bar-container:focus-within {
+  border-color: #B7410E;
+  box-shadow: 0 4px 12px rgba(183, 65, 14, 0.2);
+}
+
+/* Input field */
+#searchBar {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  padding: 10px;
+  background: transparent;
+  min-width: 0; /* Fix for small screens */
+}
+
+/* Icon buttons (voice & category) */
+.icon-btn {
+  background: #f8f9fa;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.icon-btn:hover {
+  background: #eee;
+  transform: scale(1.05);
+}
+
+/* 📂 Category Dropdown */
+.category-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+  padding: 10px;
+  display: none;
+  z-index: 100;
+  width: 200px;
+}
+
+/* 🔽 Search Results */
+.search-results {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-top: 8px;
+  padding: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  display: none;
+  position: absolute;
+  width: 100%;
+  max-width: 600px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 90;
+}
+
+/* 📌 Categories Grid */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.categories-grid .card {
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 15px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.categories-grid .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+/* 📱 Mobile Responsiveness */
+@media (max-width: 480px) {
+  .search-bar-container {
+    flex-wrap: nowrap;
+    padding: 6px 8px;
+  }
+
+  #searchBar {
+    font-size: 0.9rem;
+  }
+
+  .icon-btn {
+    padding: 6px 10px;
+    font-size: 1rem;
+  }
+
+  .category-dropdown {
+    width: 160px;
+  }
+}
+
+
+#categoryMenuBtn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(45deg, #005bea, #00c6fb);
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: background 0.3s;
+}
+#categoryMenuBtn:hover {
+  background: linear-gradient(45deg, #00c6fb, #005bea);
+}
+
+#categoryDropdown {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  position: absolute;
+  top: 60px; /* below button */
+  right: 0;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  padding: 10px;
+  z-index: 1000;
+}
+#categoryDropdown button {
+  background: #f5f7fa;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-align: left;
+}
+#categoryDropdown button:hover {
+  background: #eaf0fb;
+}
+
+/* ---------------------------
+   Scroll Down Button
+   --------------------------- */
+.scroll-down {
+  position: fixed;
+  bottom: 90px;
+  right: 95px;
+  width: 55px;
+  height: 55px;
+  background: linear-gradient(45deg, #28a745, #20c997);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1200;
+  font-size: 22px;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+.scroll-down:hover {
+  background: linear-gradient(45deg, #20c997, #28a745);
+  transform: translateY(-4px);
+}
+.scroll-down:active {
+  transform: translateY(2px);
+}
+
+        /* Vote Modal Styles - Improved Responsive Design */
+        .vote-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            overflow-y: auto;
+        }
+
+        .vote-modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: clamp(15px, 3vw, 25px);
+            text-align: center;
+            width: clamp(300px, 90vw, 500px);
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 3px solid #B7410E;
+            box-shadow: 0 20px 60px rgba(183, 65, 14, 0.4);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: clamp(15px, 4vw, 30px);
+            gap: 10px;
+        }
+
+        .modal-header h3 {
+            font-size: clamp(1.2rem, 4vw, 1.5rem);
+            color: #B7410E;
+            margin: 0;
+            text-align: left;
+            flex: 1;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: clamp(20px, 5vw, 24px);
+            color: #B7410E;
+            cursor: pointer;
+            padding: 5px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            width: clamp(30px, 6vw, 40px);
+            height: clamp(30px, 6vw, 40px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(183, 65, 14, 0.1);
+            transform: scale(1.1);
+        }
+
+        .modal-nominee-info {
+            background: rgba(183, 65, 14, 0.1);
+            padding: clamp(15px, 4vw, 20px);
+            border-radius: clamp(10px, 2vw, 15px);
+            margin-bottom: clamp(15px, 4vw, 25px);
+            border: 1px solid rgba(183, 65, 14, 0.2);
+            text-align: left;
+        }
+
+        .modal-nominee-info h4 {
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            margin-bottom: 10px;
+        }
+
+        .modal-nominee-info p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-bottom: 5px;
+        }
+
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: clamp(15px, 4vw, 25px);
+            text-align: left;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: clamp(5px, 2vw, 10px);
             font-weight: 600;
             color: #B7410E;
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
         }
 
         .form-control {
             width: 100%;
-            padding: 18px 25px;
+            padding: clamp(12px, 4vw, 18px) clamp(15px, 4vw, 25px);
             border: 2px solid rgba(183, 65, 14, 0.2);
-            border-radius: 16px 16px 16px 4px;
+            border-radius: clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px) clamp(12px, 3vw, 16px) 4px;
             background: 
                 linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
             color: #333;
-            font-size: 16px;
+            font-size: clamp(14px, 3vw, 16px);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             backdrop-filter: blur(10px);
             box-shadow: 
@@ -385,19 +760,48 @@
             transform: translateY(-2px);
         }
 
-        .form-control::placeholder {
-            color: rgba(51, 51, 51, 0.5);
-            font-style: italic;
+        .vote-summary {
+            background: rgba(40, 167, 69, 0.1);
+            padding: clamp(15px, 4vw, 20px);
+            border-radius: clamp(10px, 2vw, 15px);
+            margin-bottom: clamp(15px, 4vw, 25px);
+            border: 1px solid rgba(40, 167, 69, 0.2);
+            text-align: left;
         }
 
-        /* Button Styles */
+        .vote-summary h4 {
+            color: #28a745;
+            margin-bottom: 10px;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+        }
+
+        .vote-summary p {
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            margin-bottom: 5px;
+        }
+
+        .vote-summary .price {
+            font-size: clamp(1.4rem, 4vw, 1.8rem);
+            font-weight: bold;
+            color: #28a745;
+        }
+
+        .form-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: clamp(10px, 3vw, 15px);
+            justify-content: center;
+            margin-top: clamp(15px, 4vw, 25px);
+        }
+
+        /* Button Styles - Mobile Optimized */
         .btn {
             background: linear-gradient(135deg, #B7410E 0%, #ba6123 50%, #B94700 100%);
             color: white;
             border: none;
-            padding: 16px 32px;
-            border-radius: 20px 20px 20px 6px;
-            font-size: 16px;
+            padding: clamp(12px, 3vw, 16px) clamp(20px, 5vw, 32px);
+            border-radius: clamp(15px, 3vw, 20px) clamp(15px, 3vw, 20px) clamp(15px, 3vw, 20px) 6px;
+            font-size: clamp(13px, 3vw, 16px);
             font-weight: 700;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -405,7 +809,8 @@
             letter-spacing: 0.5px;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            gap: clamp(8px, 2vw, 12px);
             position: relative;
             overflow: hidden;
             backdrop-filter: blur(10px);
@@ -413,6 +818,8 @@
                 0 8px 25px rgba(183, 65, 14, 0.3),
                 0 3px 10px rgba(0, 0, 0, 0.1),
                 inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            min-width: clamp(100px, 25vw, 140px);
+            text-align: center;
         }
 
         .btn::before {
@@ -452,678 +859,6 @@
             background: linear-gradient(45deg, #28a745, #20c997);
         }
 
-        .btn-warning {
-            background: linear-gradient(45deg, #ffc107, #fd7e14);
-        }
-
-        /* Category Selection */
-        .selection-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .selection-mode-toggle {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .selection-counter {
-            background: linear-gradient(135deg, rgba(183, 65, 14, 0.2) 0%, rgba(186, 97, 35, 0.15) 100%);
-            padding: 15px 25px;
-            border-radius: 30px 30px 30px 8px;
-            border: 2px solid rgba(183, 65, 14, 0.3);
-            font-weight: 700;
-            backdrop-filter: blur(10px);
-            box-shadow: 
-                0 6px 20px rgba(183, 65, 14, 0.15),
-                inset 0 1px 0 rgba(255, 255, 255, 0.3);
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-            gap: 35px;
-            margin-bottom: 40px;
-            perspective: 1000px;
-        }
-
-        .category-card {
-            background: 
-                linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.85) 100%);
-            border-radius: 25px 25px 25px 5px;
-            padding: 35px;
-            border: 2px solid transparent;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(15px);
-            position: relative;
-            overflow: hidden;
-            transform-style: preserve-3d;
-        }
-
-        .category-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(90deg, #B7410E, #ba6123, #B94700);
-            border-radius: 25px 25px 0 0;
-        }
-
-        .category-card::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, rgba(183, 65, 14, 0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .category-card:hover {
-            border-color: rgba(183, 65, 14, 0.3);
-            transform: translateY(-8px);
-            box-shadow: 
-                0 25px 60px rgba(183, 65, 14, 0.15),
-                0 10px 30px rgba(0, 0, 0, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-
-        .category-card:hover::after {
-            opacity: 1;
-        }
-
-        .category-title {
-            font-size: 1.6rem;
-            color: #B7410E;
-            margin-bottom: 30px;
-            text-align: center;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        .category-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 3px;
-            background: linear-gradient(90deg, #B7410E, #ba6123);
-            border-radius: 2px;
-        }
-
-        .nominees-list {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
-        .nominee-item {
-            background: 
-                linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(248, 249, 250, 0.6) 100%);
-            border: 2px solid rgba(183, 65, 14, 0.1);
-            border-radius: 18px 18px 18px 4px;
-            padding: 22px;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 15px rgba(183, 65, 14, 0.05);
-        }
-
-        .nominee-item::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #B7410E, #ba6123);
-            border-radius: 18px 0 0 18px;
-            transform: scaleY(0);
-            transition: transform 0.3s ease;
-        }
-
-        .nominee-item:hover {
-            border-color: rgba(183, 65, 14, 0.3);
-            background: 
-                linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.8) 100%);
-            transform: translateX(8px);
-            box-shadow: 
-                0 8px 25px rgba(183, 65, 14, 0.15),
-                0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .nominee-item:hover::before {
-            transform: scaleY(1);
-        }
-
-        .nominee-item.selected {
-            border-color: #ba6123;
-            background: 
-                linear-gradient(135deg, rgba(186, 97, 35, 0.15) 0%, rgba(183, 65, 14, 0.1) 100%);
-            box-shadow: 
-                0 12px 35px rgba(186, 97, 35, 0.25),
-                0 0 0 1px rgba(186, 97, 35, 0.1),
-                inset 0 1px 0 rgba(255, 255, 255, 0.8);
-            transform: translateX(8px);
-        }
-
-        .nominee-item.selected::before {
-            transform: scaleY(1);
-            background: linear-gradient(180deg, #ba6123, #B7410E);
-        }
-
-        .nominee-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .nominee-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-            color: #333;
-        }
-
-        .nominee-votes {
-            background: linear-gradient(45deg, #B7410E, #ba6123);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: bold;
-        }
-
-        .custom-radio {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 24px;
-            height: 24px;
-        }
-
-        .custom-radio input {
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            cursor: pointer;
-        }
-
-        .radio-checkmark {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 24px;
-            width: 24px;
-            background: rgba(183, 65, 14, 0.1);
-            border: 2px solid #B7410E;
-            border-radius: 50%;
-            transition: all 0.3s ease;
-        }
-
-        .custom-radio input:checked ~ .radio-checkmark {
-            background: #B7410E;
-        }
-
-        .radio-checkmark:after {
-            content: "";
-            position: absolute;
-            display: none;
-            left: 6px;
-            top: 2px;
-            width: 6px;
-            height: 12px;
-            border: solid white;
-            border-width: 0 3px 3px 0;
-            transform: rotate(45deg);
-        }
-
-        .custom-radio input:checked ~ .radio-checkmark:after {
-            display: block;
-        }
-
-        /* Nominee Details Section */
-        .nominee-details {
-            display: none;
-        }
-
-        .selected-categories-summary {
-            background: rgba(186, 97, 35, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(186, 97, 35, 0.3);
-        }
-
-        .selected-categories-summary h3 {
-            color: #ba6123;
-            margin-bottom: 20px;
-            text-align: center;
-            font-size: 1.5rem;
-        }
-
-/* Responsive Auto-scrolling Banner Styles */
-.banner-section {
-    margin-bottom: clamp(20px, 5vw, 40px);
-    overflow: hidden;
-    border-radius: clamp(8px, 3vw, 15px);
-    position: relative;
-    width: 100%;
-}
-
-.banner-carousel {
-    display: flex;
-    gap: clamp(10px, 3vw, 20px);
-    animation: autoScroll 15s linear infinite;
-    width: calc(var(--banner-width) * 6);
-    will-change: transform;
-}
-
-:root {
-    --banner-width: clamp(250px, 60vw, 380px);
-    --banner-height: clamp(140px, 35vw, 220px);
-}
-
-@keyframes autoScroll {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-/* Pause animation on hover for desktop */
-@media (hover: hover) and (pointer: fine) {
-    .banner-carousel:hover {
-        animation-play-state: paused;
-    }
-}
-
-.banner-item {
-    flex: 0 0 auto;
-    width: var(--banner-width);
-    position: relative;
-}
-
-.banner-item img {
-    width: 100%;
-    height: var(--banner-height);
-    object-fit: cover;
-    border-radius: clamp(8px, 2vw, 15px);
-    border: clamp(1px, 0.5vw, 3px) solid rgba(0, 123, 255, 0.3);
-    transition: all 0.3s ease;
-    display: block;
-}
-
-/* Desktop hover effects */
-@media (hover: hover) and (pointer: fine) {
-    .banner-item img:hover {
-        transform: scale(1.05);
-        border-color: #00d4ff;
-        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
-    }
-}
-
-/* Mobile optimizations */
-@media (max-width: 768px) {
-    :root {
-        --banner-width: clamp(200px, 70vw, 300px);
-        --banner-height: clamp(120px, 30vw, 180px);
-    }
-    
-    .banner-carousel {
-        gap: clamp(8px, 2vw, 15px);
-        animation-duration: 20s; /* Slower on mobile for better visibility */
-    }
-    
-    .banner-item img {
-        border-width: 2px;
-    }
-    
-    /* Touch feedback for mobile */
-    .banner-item img:active {
-        transform: scale(0.98);
-        transition: transform 0.1s ease;
-    }
-}
-
-/* Small mobile devices */
-@media (max-width: 480px) {
-    :root {
-        --banner-width: clamp(180px, 80vw, 250px);
-        --banner-height: clamp(100px, 25vw, 150px);
-    }
-    
-    .banner-section {
-        margin-bottom: 20px;
-        border-radius: 8px;
-    }
-    
-    .banner-carousel {
-        gap: 8px;
-        animation-duration: 25s;
-    }
-    
-    .banner-item img {
-        border-radius: 8px;
-        border-width: 1px;
-    }
-}
-
-/* Large screens */
-@media (min-width: 1200px) {
-    :root {
-        --banner-width: 400px;
-        --banner-height: 250px;
-    }
-    
-    .banner-carousel {
-        gap: 25px;
-        animation-duration: 12s;
-    }
-}
-
-/* Ultra-wide screens */
-@media (min-width: 1600px) {
-    :root {
-        --banner-width: 450px;
-        --banner-height: 280px;
-    }
-    
-    .banner-section {
-        margin-bottom: 50px;
-    }
-}
-
-/* High DPI displays */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .banner-item img {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
-    }
-}
-
-/* Reduce motion for accessibility */
-@media (prefers-reduced-motion: reduce) {
-    .banner-carousel {
-        animation: none;
-    }
-    
-    .banner-item img {
-        transition: none;
-    }
-    
-    .banner-item img:hover {
-        transform: none;
-    }
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-    .banner-item img {
-        border-color: rgba(0, 123, 255, 0.4);
-    }
-    
-    .banner-item img:hover {
-        border-color: #00d4ff;
-        box-shadow: 0 8px 25px rgba(0, 212, 255, 0.4);
-    }
-}
-
-/* Landscape mobile orientation */
-@media (max-height: 500px) and (orientation: landscape) {
-    :root {
-        --banner-height: clamp(80px, 20vw, 120px);
-    }
-    
-    .banner-section {
-        margin-bottom: 15px;
-    }
-}
-
-/* Portrait tablet */
-@media (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
-    :root {
-        --banner-width: clamp(280px, 60vw, 350px);
-        --banner-height: clamp(160px, 32vw, 200px);
-    }
-}
-
-/* Landscape tablet */
-@media (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-    :root {
-        --banner-width: clamp(300px, 45vw, 380px);
-        --banner-height: clamp(180px, 28vw, 220px);
-    }
-}
-
-/* Container queries for modern browsers */
-@supports (container-type: inline-size) {
-    .banner-section {
-        container-type: inline-size;
-    }
-    
-    @container (max-width: 500px) {
-        :root {
-            --banner-width: clamp(160px, 75vw, 220px);
-            --banner-height: clamp(90px, 22vw, 130px);
-        }
-        
-        .banner-carousel {
-            gap: 6px;
-        }
-    }
-    
-    @container (min-width: 1000px) {
-        :root {
-            --banner-width: 400px;
-            --banner-height: 250px;
-        }
-    }
-}
-
-/* Touch device optimizations */
-@media (hover: none) and (pointer: coarse) {
-    .banner-item img {
-        -webkit-tap-highlight-color: transparent;
-    }
-    
-    .banner-item img:active {
-        opacity: 0.8;
-        transform: scale(0.98);
-    }
-}
-
-/* Safe area insets for notched devices */
-@supports (padding: max(0px)) {
-    .banner-section {
-        margin-left: max(10px, env(safe-area-inset-left));
-        margin-right: max(10px, env(safe-area-inset-right));
-    }
-}
-
-/* Loading state */
-.banner-item img[loading="lazy"] {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-}
-
-/* Performance optimizations */
-.banner-carousel {
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-}
-
-.banner-item img {
-    transform: translateZ(0);
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-}
-
-/* Print styles */
-@media print {
-    .banner-section {
-        display: none;
-    }
-}
-
-/* Focus styles for accessibility */
-.banner-item img:focus {
-    outline: 2px solid #00d4ff;
-    outline-offset: 2px;
-}
-
-/* Error state for broken images */
-.banner-item img::after {
-    content: "Image failed to load";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    padding: 10px;
-    border-radius: 5px;
-    font-size: 12px;
-    display: none;
-}
-
-.banner-item img:not([src]),
-.banner-item img[src=""] {
-    background: #f0f0f0;
-}
-
-.banner-item img:not([src])::after,
-.banner-item img[src=""]::after {
-    display: block;
-}
-
-        .selected-category-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(51, 51, 51, 0.1);
-        }
-
-        .selected-category-item:last-child {
-            border-bottom: none;
-        }
-
-        /* File Upload Styles */
-        .file-upload-wrapper {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 15px;
-        }
-
-        .file-upload {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .file-upload-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 15px 25px;
-            background: rgba(183, 65, 14, 0.2);
-            border: 2px dashed #B7410E;
-            border-radius: 12px;
-            color: #B7410E;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .file-upload-btn:hover {
-            background: rgba(183, 65, 14, 0.3);
-            border-color: #ba6123;
-        }
-
-        .file-upload-btn i {
-            margin-right: 12px;
-            font-size: 18px;
-        }
-
-        .image-preview {
-            max-width: 150px;
-            max-height: 150px;
-            border-radius: 12px;
-            margin-top: 15px;
-            border: 3px solid #B7410E;
-            object-fit: cover;
-        }
-
-        /* Payment Sections */
-        .payment-section {
-            background: rgba(183, 65, 14, 0.1);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(183, 65, 14, 0.3);
-        }
-
-        .payment-section h3 {
-            color: #B7410E;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.4rem;
-        }
-
-        .payment-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 1.1rem;
-        }
-
-        .payment-item:last-child {
-            border-bottom: none;
-            font-weight: bold;
-            font-size: 1.3rem;
-            color: #00d4ff;
-            margin-top: 10px;
-        }
-
-        .payment-item span:first-child {
-            font-weight: 600;
-        }
-
-        .payment-item span:last-child {
-            color: #00d4ff;
-            font-weight: bold;
-        }
-
         /* Alert Styles */
         .alert {
             padding: 18px 25px;
@@ -1151,12 +886,6 @@
             color: #dc3545;
         }
 
-        .alert-warning {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid rgba(255, 193, 7, 0.5);
-            color: #ffc107;
-        }
-
         .alert-info {
             background: rgba(23, 162, 184, 0.2);
             border: 1px solid rgba(23, 162, 184, 0.5);
@@ -1166,14 +895,29 @@
         /* Loading Styles */
         .loading {
             display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             text-align: center;
-            padding: 40px;
+            color: white;
         }
 
         .spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top: 4px solid #007bff;
+            border-top: 4px solid #B7410E;
             width: 60px;
             height: 60px;
             animation: spin 1s linear infinite;
@@ -1185,492 +929,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Fixed Selection Counter */
-        .fixed-counter {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            background: linear-gradient(45deg, #007bff, #00d4ff);
-            color: white;
-            padding: 18px 25px;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
-            z-index: 1000;
-            display: none;
-        }
-
-        /* Powered By */
-        .powered-by {
-            text-align: center;
-            margin-top: 40px;
-            padding: 30px;
-            opacity: 0.8;
-        }
-
-        .powered-by img {
-            width: 100px;
-            height: auto;
-            margin-bottom: 15px;
-            border-radius: 50%;
-        }
-
-        /* Success Pop-up Modal */
-        .success-modal {
-            display: none;
-            position: fixed;
-            z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-        }
-
-        .success-modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            max-width: 500px;
-            width: 90%;
-            border: 3px solid #00d4ff;
-            box-shadow: 0 20px 60px rgba(0, 123, 255, 0.4);
-        }
-
-        .success-icon {
-            font-size: 4rem;
-            color: #28a745;
-            margin-bottom: 20px;
-            animation: bounce 1s ease infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-            40% { transform: translateY(-10px); }
-            60% { transform: translateY(-5px); }
-        }
-
-        .success-title {
-            font-size: 2rem;
-            color: #00d4ff;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-
-        .success-message {
-            font-size: 1.1rem;
-            margin-bottom: 25px;
-            opacity: 0.9;
-        }
-
-        .success-comeback {
-            font-size: 1.3rem;
-            color: #ffc107;
-            font-weight: bold;
-            margin-bottom: 30px;
-            padding: 15px;
-            background: rgba(255, 193, 7, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 193, 7, 0.3);
-        }
-
-        /* Scroll Down Button */
-        .scroll-down {
-            position: fixed;
-            bottom: 140px;
-            right: 25px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(45deg, #28a745, #20c997);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: block;
-            z-index: 1000;
-            font-size: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .scroll-down:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
-        }
-
         /* Responsive Styles */
-        /* Admin Dashboard Styles */
-        .admin-tabs {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 40px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .admin-tab-btn {
-            background: linear-gradient(135deg, rgba(183, 65, 14, 0.1) 0%, rgba(186, 97, 35, 0.05) 100%);
-            color: #B7410E;
-            border: 2px solid rgba(183, 65, 14, 0.3);
-            padding: 15px 30px;
-            border-radius: 20px 20px 20px 6px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .admin-tab-btn.active {
-            background: linear-gradient(135deg, #B7410E 0%, #ba6123 50%, #B94700 100%);
-            color: white;
-            border-color: #B7410E;
-            box-shadow: 
-                0 8px 25px rgba(183, 65, 14, 0.3),
-                0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .admin-tab-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 12px 30px rgba(183, 65, 14, 0.2),
-                0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .nomination-sub-tabs {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .sub-tab-btn {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 249, 250, 0.8) 100%);
-            color: #333;
-            border: 2px solid rgba(183, 65, 14, 0.2);
-            padding: 12px 20px;
-            border-radius: 15px 15px 15px 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-        }
-
-        .sub-tab-btn.active {
-            background: linear-gradient(135deg, #B7410E 0%, #ba6123 100%);
-            color: white;
-            border-color: #B7410E;
-        }
-
-        .sub-tab-count {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .sub-tab-btn.active .sub-tab-count {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .nomination-item {
-            background: 
-                linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.9) 100%);
-            border: 2px solid rgba(183, 65, 14, 0.1);
-            border-radius: 20px;
-            padding: 25px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 
-                0 8px 25px rgba(183, 65, 14, 0.08),
-                0 3px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .nomination-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .nomination-info h3 {
-            color: #B7410E;
-            margin-bottom: 10px;
-            font-size: 1.3rem;
-        }
-
-        .nomination-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .detail-item {
-            background: rgba(183, 65, 14, 0.05);
-            padding: 12px;
-            border-radius: 10px;
-            border-left: 3px solid #B7410E;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #B7410E;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-        }
-
-        .detail-value {
-            color: #333;
-            font-weight: 500;
-        }
-
-        .status-badge {
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-successful {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .status-pending {
-            background: linear-gradient(135deg, #ffc107, #fd7e14);
-            color: white;
-        }
-
-        .status-failed {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-        }
-
-        .nomination-actions {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .action-btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-approve {
-            background: linear-gradient(135deg, #28a745, #20c997);
-            color: white;
-        }
-
-        .btn-reject {
-            background: linear-gradient(135deg, #dc3545, #c82333);
-            color: white;
-        }
-
-        .btn-revoke {
-            background: linear-gradient(135deg, #6c757d, #495057);
-            color: white;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Compact View Styles */
-        .nomination-summary {
-            margin-bottom: 15px;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        .summary-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: rgba(183, 65, 14, 0.05);
-            border-radius: 8px;
-            border-left: 3px solid #B7410E;
-        }
-
-        .summary-label {
-            font-weight: 600;
-            color: #B7410E;
-            font-size: 0.9rem;
-        }
-
-        .summary-value {
-            color: #333;
-            font-weight: 500;
-        }
-
-        .details-toggle-btn {
-            background: linear-gradient(135deg, rgba(183, 65, 14, 0.1) 0%, rgba(186, 97, 35, 0.05) 100%);
-            color: #B7410E;
-            border: 2px solid rgba(183, 65, 14, 0.2);
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin: 0 auto;
-        }
-
-        .details-toggle-btn:hover {
-            background: rgba(183, 65, 14, 0.15);
-            transform: translateY(-2px);
-        }
-
-        /* Images Section Styles */
-        .images-section {
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(183, 65, 14, 0.03);
-            border-radius: 15px;
-            border: 1px solid rgba(183, 65, 14, 0.1);
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .image-item {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 12px;
-            padding: 15px;
-            border: 1px solid rgba(183, 65, 14, 0.1);
-        }
-
-        .image-label {
-            font-weight: 600;
-            color: #B7410E;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .image-preview-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .image-placeholder {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            padding: 10px;
-            background: rgba(183, 65, 14, 0.05);
-            border-radius: 8px;
-            color: #666;
-        }
-
-        .image-placeholder i {
-            font-size: 1.2rem;
-            color: #B7410E;
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #B7410E, #ba6123);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 14px;
-        }
-
-        .download-btn:hover {
-            background: linear-gradient(135deg, #ba6123, #B94700);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(183, 65, 14, 0.3);
-        }
-
-        .download-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-
-        .download-btn:disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
-
-        /* Categories Section Styles */
-        .categories-section {
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(183, 65, 14, 0.03);
-            border-radius: 15px;
-            border: 1px solid rgba(183, 65, 14, 0.1);
-        }
-
-        .categories-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 12px;
-        }
-
-        .category-detail-item {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 12px 15px;
-            border-radius: 10px;
-            border-left: 3px solid #B7410E;
-        }
-
-        .category-name {
-            font-weight: 600;
-            color: #B7410E;
-            font-size: 0.95rem;
-            margin-bottom: 5px;
-        }
-
-        .nominee-supported {
-            color: #666;
-            font-size: 0.9rem;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -1686,48 +945,7 @@
 
             .categories-grid {
                 grid-template-columns: 1fr;
-            }
-
-            .banner-item {
-                width: 300px;
-            }
-
-            .selection-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .progress-steps {
-                gap: 15px;
-            }
-
-            .step-number {
-                width: 35px;
-                height: 35px;
-                font-size: 14px;
-            }
-
-            .fixed-counter {
-                bottom: 15px;
-                right: 15px;
-                padding: 15px 20px;
-                font-size: 14px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .banner-item {
-                width: 260px;
-            }
-
-            .banner-item img {
-                height: 180px;
-            }
-
-            .nominee-info {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+                gap: 20px;
             }
 
             .header {
@@ -1754,6 +972,29 @@
                 border-radius: 20px;
             }
 
+            .vote-modal-content {
+                border-radius: 20px;
+                position: relative;
+                top: auto;
+                left: auto;
+                transform: none;
+                margin: 20px auto;
+                max-height: calc(100vh - 40px);
+            }
+
+            .vote-modal {
+                align-items: flex-start;
+                padding: 20px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nominee-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
             .section h2 {
                 font-size: 1.4rem;
                 flex-direction: column;
@@ -1774,481 +1015,309 @@
                 border-radius: 15px;
             }
 
+            .form-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
             .btn {
-                padding: 14px 24px;
-                font-size: 14px;
-                border-radius: 15px;
-            }
-
-            .progress-steps::before {
-                display: none;
-            }
-
-            .step-number {
-                width: 40px;
-                height: 40px;
-                font-size: 16px;
-            }
-
-            /* Admin Mobile Styles */
-            .admin-tabs {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .admin-tab-btn {
-                padding: 12px 20px;
-                font-size: 14px;
-            }
-
-            .nomination-sub-tabs {
-                flex-direction: column;
-                gap: 10px;
-                align-items: stretch;
-            }
-
-            .sub-tab-btn {
-                justify-content: center;
-                padding: 10px 15px;
-            }
-
-            .nomination-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 15px;
-            }
-
-            .nomination-actions {
-                justify-content: center;
-            }
-
-            .summary-grid {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-
-            .image-grid {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-
-            .categories-list {
-                grid-template-columns: 1fr;
-            }
-
-            .image-preview-container {
-                flex-direction: column;
-                gap: 10px;
-            }
-
-            .download-btn {
                 width: 100%;
-                justify-content: center;
+                margin: 0;
             }
         }
+
+        /* Small Mobile Devices */
+        @media (max-width: 375px) {
+            .vote-modal-content {
+                width: 95vw;
+                margin: 10px auto;
+                padding: 15px;
+            }
+
+            .form-control {
+                padding: 12px 15px;
+                font-size: 14px;
+            }
+        }
+        
+         /* Scroll Down Button */
+        .scroll-down {
+            position: fixed;
+            bottom: 140px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: block;
+            z-index: 1000;
+            font-size: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+        }
+
+        .scroll-down:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(40, 167, 69, 0.4);
+        }
+        
+        /* Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Smooth fade-in animations */
+.section, .category-card, .nominee-item {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.8s ease forwards;
+}
+.category-card:nth-child(1) { animation-delay: 0.2s; }
+.category-card:nth-child(2) { animation-delay: 0.4s; }
+.category-card:nth-child(3) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Award Gold Gradient */
+.gold-text {
+  background: linear-gradient(45deg, #FFD700, #FF8C00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+}
+
+/* Pulse effect for call-to-action */
+.scroll-down {
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); box-shadow: 0 0 15px rgba(40,167,69,0.6); }
+  100% { transform: scale(1); }
+}
+
+/* Modal upgrade */
+.vote-modal-content {
+  animation: slideUp 0.4s ease;
+}
+@keyframes slideUp {
+  from { transform: translate(-50%, 100%); opacity: 0; }
+  to { transform: translate(-50%, -50%); opacity: 1; }
+}
+/* 📂 Category Dropdown */
+.category-dropdown {
+  position: absolute;
+  top: 110%;
+  right: 10px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+  padding: 10px;
+  display: none;
+  z-index: 100;
+  width: 220px;
+  max-height: 300px;   /* ✅ Restrict height */
+  overflow-y: auto;    /* ✅ Enable vertical scrolling */
+  scrollbar-width: thin;       /* Firefox */
+  scrollbar-color: #bbb #f5f5f5;
+}
+
+/* Custom scrollbar for WebKit (Chrome, Safari, Edge) */
+.category-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+
+.category-dropdown::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 10px;
+}
+
+.category-dropdown::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 10px;
+}
+
+.category-dropdown::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
     </style>
 </head>
-<body>
+
+   <body>
     <div class="container">
         <!-- Header -->
         <div class="header">
-           <div class="header-content">
-             <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg"  alt="Nulass Logo" class="logo">
-          
-                <p class="event-description">Pay your nomination fee to Proceed to Voting Stage  </p>
+            <div class="header-content">
+                <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg" alt="Nulass Logo" class="logo">
+                <h1 class="event-title">Nulass Awards</h1>
+                
                 <div class="host-info">
                     Committee Chairman: <strong>Bami</strong>
                 </div>
-        </div>
+                
+            </div>
         </div>
 
-       <!-- Banner Section -->
+        <!-- Banner Section -->
         <div class="banner-section">
             <div class="banner-carousel">
                 <div class="banner-item">
                     <img src="https://i.ibb.co/5hrNmSgM/Fast-Withdrawal-s-20250806-044026-0000.png" alt="Event Banner 1" />
                 </div>
                 <div class="banner-item">
-                   <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg" alt="Event Banner 2" />
+                    <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg" alt="Event Banner 2" />
                 </div>
                 <div class="banner-item">
                     <img src="https://i.ibb.co/tpNVMDrZ/Fast-Withdrawal-s-20250806-044937-0000.png" alt="Event Banner 3" />
                 </div>
             </div>
         </div>
-        <!-- Progress Steps -->
-        <div class="progress-steps">
-            <div class="step active" id="step1">
-                <div class="step-number">1</div>
-                <div class="step-text">Register</div>
-            </div>
-            <div class="step" id="step2">
-                <div class="step-number">2</div>
-                <div class="step-text">Select Categories</div>
-            </div>
-            <div class="step" id="step3">
-                <div class="step-number">3</div>
-                <div class="step-text">Add Details</div>
-            </div>
-            <div class="step" id="step4">
-                <div class="step-number">4</div>
-                <div class="step-text">Submit</div>
-            </div>
-        </div>
 
-        <!-- Registration/Login Section -->
-        <div id="registrationSection" class="section">
-            <!-- Auth Mode Toggle -->
-            <div class="auth-toggle" style="text-align: center; margin-bottom: 30px;">
-                <button type="button" class="btn btn-secondary" id="loginModeBtn" onclick="toggleAuthMode('login')">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-                <button type="button" class="btn btn-success" id="registerModeBtn" onclick="toggleAuthMode('register')">
-                    <i class="fas fa-user-plus"></i> Register
-                </button>
-            </div>
-
-            <h2 id="authTitle"><i class="fas fa-user-plus"></i> <span id="authTitleText">Registration</span></h2>
-            
-            <div class="alert alert-info" id="authDescription">
-                <i class="fas fa-info-circle"></i> 
-                <span id="authDescText"> Nulass Awards 🤓.</span>
-            </div>
-
-            <form id="registrationForm">
-                <div class="form-group">
-                    <label for="userEmail">Email Address</label>
-                    <input type="email" id="userEmail" class="form-control" placeholder="Enter your email address" required>
-                </div>
-                <div class="form-group">
-                    <label for="userPassword" id="passwordLabel">Password</label>
-                    <input type="password" id="userPassword" class="form-control" placeholder="Enter your password" required>
-                </div>
-                <div class="form-group" id="confirmPasswordGroup">
-                    <label for="confirmPassword">Confirm Password</label>
-                    <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm your password" required>
-                </div>
-                <button type="submit" class="btn" id="authSubmitBtn">
-                    <i class="fas fa-arrow-right"></i> <span id="authSubmitText">Continue to Categories</span>
-                </button>
-            </form>
-
-            <!-- Auth Mode Links -->
-            <div class="auth-links" style="text-align: center; margin-top: 20px; opacity: 0.8;">
-                <span id="authSwitchText">Already have an account?</span>
-                <a href="#" onclick="toggleAuthMode('login')" id="authSwitchLink" style="color: #B7410E; text-decoration: none; font-weight: 600;">Login here</a>
-            </div>
-        </div>
-
-        <!-- Category Selection Section -->
-        <div id="categorySection" class="section" style="display: none;">
-            <h2><i class="fas fa-trophy"></i> Select Nomination Categories</h2>
+        <!-- Voting Section -->
+        <div class="section">
+            <h2><i class="fas fa-vote-yea"></i> Vote for Nominees</h2>
             
             <div class="alert alert-info">
                 <i class="fas fa-info-circle"></i> 
-                Choose the categories you want to be nominated for. Select which existing nominee you want to support/align with in each category.
+                Click on any nominee to cast your vote. Each vote costs ₦50.
             </div>
 
-            <!-- Selection Controls -->
-            <div class="selection-controls">
-                <div class="selection-mode-toggle">
-                    <button class="btn btn-success" onclick="toggleMultipleSelection()" id="multiSelectBtn">
-                        <i class="fas fa-check"></i> Disable Multiple Selection
-                    </button>
-                    <span id="selectionModeText">Multiple categories enabled</span>
-                </div>
-                <div class="selection-counter" id="selectionCounter" style="display: none;">
-                    Selected: <span id="selectedCount">0</span> categories
-                </div>
-            </div>
+        <!-- 🔍 Search Bar Container -->
+<div class="search-bar-container">
+  <input type="text" id="searchBar" placeholder="Search the name ..." />
 
-            <!-- Categories Grid -->
-            <div class="categories-grid" id="categoriesGrid">
-                <!-- Categories will be populated by JavaScript -->
-            </div>
+  
 
-            <button id="proceedToDetails" class="btn" style="display: none;">
-                <i class="fas fa-arrow-right"></i> Proceed to Details
-            </button>
-        </div>
+  <!-- 📂 Category Menu -->
+  <button id="categoryMenuBtn" class="icon-btn" title="Categories">☰</button>
 
-        <!-- Nominee Details Section -->
-        <div id="detailsSection" class="section nominee-details">
-            <h2><i class="fas fa-user"></i> Nominee Information</h2>
-            
-            <!-- Selected Categories Summary -->
-            <div class="selected-categories-summary">
-                <h3><i class="fas fa-check-circle"></i> Your Selected Categories</h3>
-                <div id="selectedCategoriesList">
-                    <!-- Selected categories will be displayed here -->
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="nomineeName">Your Full Name</label>
-                <input type="text" id="nomineeName" class="form-control" placeholder="Enter your full name" required>
-            </div>
-
-            <div class="form-group">
-                <label>Your Profile Image l</label>
-                <p style="font-size: 14px; opacity: 0.8; margin-bottom: 15px;">
-                    For CEO/Brand categories, please upload your brand logo instead of personal photo 
-                </p>
-                <div class="file-upload-wrapper">
-                    <input type="file" id="nomineeImage" class="file-upload" accept="image/*" required>
-                    <div class="file-upload-btn">
-                        <i class="fas fa-upload"></i>
-                        Choose Profile Image / Brand Logo
-                    </div>
-                </div>
-                <div id="imagePreview"></div>
-            </div>
-
-            <div class="section-buttons">
-                <button class="btn btn-secondary" onclick="goBackToCategories()">
-                    <i class="fas fa-arrow-left"></i> Back to Categories
-                </button>
-                <button id="proceedToPayment" class="btn" onclick="proceedToPaymentSection()">
-                    <i class="fas fa-arrow-right"></i> Proceed to Payment
-                </button>
-            </div>
-        </div>
-
-        <!-- Payment Section -->
-<div id="paymentSection" class="section" style="display:none; font-family:Arial, sans-serif; font-size:14px; color:#333; padding:15px; border:1px solid #ddd; border-radius:10px; background:#f9f9f9;">
-
-  <h2 style="margin-bottom:15px;">
-    <i class="fas fa-credit-card"></i> Payment & Submission
-  </h2>
-
-  <!-- Horizontal Payment Details -->
-  <div class="payment-section" style="margin-bottom:20px;">
-    <h3><i class="fas fa-university"></i> Payment Details</h3>
-    
-    <div style="display:flex; flex-wrap:wrap; gap:15px; align-items:center; font-size:13px; background:#fff; border:1px solid #ccc; padding:10px; border-radius:8px;">
-      <div><strong>Base Fee:</strong> ₦1,000</div>
-      <div><strong>Category(s):</strong> <span id="categoryCount">1</span></div>
-      <div><strong>Subtotal:</strong> ₦<span id="subtotalAmount">1,000</span></div>
-      <div><strong>Service Fee:</strong> ₦<span id="serviceFeeAmount">50</span></div>
-      <div><strong>Processing Fee:</strong> ₦<span id="processingFeeAmount">100</span></div>
-      <div style="font-weight:bold; color:#000;"><strong>Total:</strong> ₦<span id="totalAmount">1,150</span></div>
-    </div>
-
-    <!-- Highlighted Transfer to Bank -->
-    <div style="margin-top:12px; padding:10px; border-radius:8px; background:#fff8e1; border:1px solid #f4c542; font-size:14px; font-weight:bold; color:#333;">
-      <i class="fas fa-university" style="margin-right:6px; color:#d48806;"></i> 
-      Transfer to Bank: 
-<span style="color:#000;">GTBank</span>
-<span style="color:#000;">
-    Salisu Rofiat Oyindamola:</span>
- <span style="color:#000;">0656350237</span>  
-      Amount: ₦<span id="bankTransferAmount">1,150</span>
-    </div>
-  </div>
-
-  <!-- Upload Screenshot -->
-  <div class="payment-section" style="margin-bottom:20px;">
-    <h3><i class="fas fa-camera"></i> Payment Verification</h3>
-    <p style="font-size:13px; margin:5px 0 10px; opacity:0.8;">
-      Please <strong>upload your bank transfer screenshot</strong> to confirm payment.
-    </p>
-    <label for="paymentScreenshot" style="display:inline-block; cursor:pointer; padding:12px 18px; border:2px dashed #aaa; border-radius:8px; background:#fff; text-align:center;">
-      <i class="fas fa-camera" style="font-size:18px; margin-right:8px; color:#555;"></i>
-      <span>Click to Upload Screenshot</span>
-    </label>
-    <input type="file" id="paymentScreenshot" class="file-upload" accept="image/*" required style="display:none;">
-    <div id="screenshotPreview" style="margin-top:10px;"></div>
-  </div>
-
-  <!-- Buttons -->
-  <div class="section-buttons" style="display:flex; gap:10px; flex-wrap:wrap;">
-    <button class="btn btn-secondary" onclick="goBackToDetails()">
-      <i class="fas fa-arrow-left"></i> Back
-    </button>
-    <button id="submitNomination" class="btn" onclick="handleSubmission()">
-      <i class="fas fa-paper-plane"></i> Submit
-    </button>
-  </div>
-
+  <!-- Dropdown for Categories -->
+  <div id="categoryDropdown" class="category-dropdown"></div>
 </div>
+
+<!-- 🔽 Dynamic Search Results -->
+<div class="search-results" id="searchResults">
+  <!-- Results appear here -->
+</div>
+ 
+<!-- 📌 Category Grid -->
+<div id="categoriesGrid" class="categories-grid"></div>
+
+
+     
+
+        <!-- Vote Modal -->
+        <div id="voteModal" class="vote-modal">
+            <div class="vote-modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-vote-yea"></i> Cast Your Vote</h3>
+                    <button class="modal-close" onclick="closeVoteModal()">&times;</button>
+                </div>
+
+                <div class="modal-nominee-info" id="modalNomineeInfo">
+                    <!-- Nominee info will be populated here -->
+                </div>
+
+                <div class="form-group">
+                    <label for="voterName">Your Name</label>
+                    <input type="text" id="voterName" class="form-control" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="voterEmail">Your Email</label>
+                    <input type="email" id="voterEmail" class="form-control" placeholder="Enter your email address" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="voteCount">Number of Votes</label>
+                    <input type="number" id="voteCount" class="form-control" min="1" value="1" placeholder="Enter number of votes" required>
+                </div>
+
+                <div class="vote-summary" id="voteSummary">
+                    <h4><i class="fas fa-calculator"></i> Payment Summary</h4>
+                    <p>Votes: <span id="summaryVotes">1</span></p>
+                    <p>Rate: ₦50 per vote</p>
+                    <p class="price">Total: ₦<span id="summaryTotal">50</span></p>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn btn-secondary" onclick="closeVoteModal()">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn btn-success" onclick="processPayment()" id="payNowBtn">
+                        <i class="fas fa-credit-card"></i> Pay & Vote Now
+                    </button>
+                </div>
+            </div>
+        </div>
+ 
 
         <!-- Loading Screen -->
         <div id="loadingScreen" class="loading">
-            <div class="spinner"></div>
-            <p>Processing your nomination...</p>
-        </div>
-
-      <div style="border:1px solid #ddd; padding:15px; border-radius:10px; background-color:#f9f9f9; font-family:Arial, sans-serif; font-size:14px; line-height:1.6; color:#333;">
-  <p style="margin:0 0 10px 0; font-weight:bold; font-size:15px;">Instructions:</p>
-  <ol style="margin:0; padding-left:20px;">
-    <li style="margin-bottom:8px;">For submission problems, check the size of the image uploaded. It must not be higher than <strong>2MB</strong>.</li>
-    <li>For any problem, DM <strong>+234 8029941678</strong>. Just say <strong>"Nulass"</strong> for a quick response.</li>
-  </ol>
-</div>
-
-        <!-- Fixed Selection Counter -->
-        <div id="fixedCounter" class="fixed-counter">
-            Categories: <span id="fixedSelectedCount">0</span>
-        </div>
-
-        <!-- Fixed User Logout Button -->
-        <div id="fixedLogoutBtn" class="fixed-logout" style="display: none;">
-            <button class="btn btn-secondary" onclick="logoutUser()" title="Logout">
-                <i class="fas fa-sign-out-alt"></i>
-            </button>
-        </div>
-<div class="host-info">
-            <strong> D e s i r e L e d A d m i n i s t r a t i o n </strong>
-                </div>
-        <!-- Success Modal -->
-        <div id="successModal" class="success-modal">
-            <div class="success-modal-content">
-                <div class="success-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3 class="success-title">Nomination Submitted!</h3>
-                <p class="success-message" id="successMessage">
-                    Your nomination has been successfully submitted and saved to our database.
-                </p>
-                <div class="success-comeback">
-                    🎉 Come back again when you win the voting rounds! 🏆
-                </div>
-                <button class="btn btn-success" onclick="closeSuccessModal()">
-                    <i class="fas fa-home"></i> Continue
-                </button>
+            <div class="loading-content">
+                <div class="spinner"></div>
+                <p>Processing your vote...</p>
             </div>
         </div>
 
-        <!-- Scroll Down Button -->
-        <button class="scroll-down" id="scrollDown" onclick="scrollDown()">
-            <i class="fas fa-chevron-down"></i>
-        </button>
+        <!-- Instructions -->
+        <div style="border:1px solid #ddd; padding:15px; border-radius:10px; background-color:#f9f9f9; font-family:Arial, sans-serif; font-size:14px; line-height:1.6; color:#333; margin-top: 30px;">
+            <p style="margin:0 0 10px 0; font-weight:bold; font-size:15px;">Voting Instructions:</p>
+            <ol style="margin:0; padding-left:20px;">
+                <li style="margin-bottom:8px;">Click on any nominee to open the voting modal</li>
+                <li style="margin-bottom:8px;">Enter your details and number of votes you want to purchase</li>
+                <li style="margin-bottom:8px;">Each vote costs ₦50. Payment is processed through Flutterwave</li>
+                <li>After successful payment, your votes will be counted automatically</li>
+            </ol>
+        </div>
+
+        <div class="host-info" style="margin-top: 30px;">
+            <strong>Desire Led Administration</strong>
+        </div>
+
+        <div class="host-info" style="margin-top: 20px;">
+            Hosted by: <strong>35th Administration Anniversary</strong>
+        </div>
 
         <!-- Powered By -->
-        <div class="powered-by">
-            <img src="https://i.ibb.co/VpC27tbt/Rewarder-logo.png" alt="Rewarder Logo">
+        <div style="text-align: center; margin-top: 40px; padding: 30px; opacity: 0.8;">
+            <img src="https://i.ibb.co/VpC27tbt/Rewarder-logo.png" alt="Rewarder Logo" style="width: 100px; height: auto; margin-bottom: 15px; border-radius: 50%;">
             <p><strong>Powered by Rewarder</strong></p>
         </div>
-          <div class="host-info">
-                    Hosted by: <strong> 35th Administration Anniversary</strong>
-                </div>
-    </div>
-
-    <!-- Admin Dashboard -->
-    <div id="adminDashboard" style="display: none;">
-        <div class="container">
-            <!-- Admin Header -->
-            <div class="header">
-               <div class="header-content">
-                    <h1 class="event-title">Admin </h1>
-                    <h2 class="event-slogan">for Nulass Award</h2>
-                   <div class="host-info">
-                        <button class="btn btn-secondary" onclick="logoutAdmin()" style="margin-left: 20px; padding: 8px 16px; font-size: 14px;">
-                            <i class="fas fa-sign-out-alt"></i> Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Banner Section -->
-            <div class="banner-section">
-                <div class="banner-carousel">
-                    <div class="banner-item">
-                        <img src="https://i.ibb.co/5hrNmSgM/Fast-Withdrawal-s-20250806-044026-0000.png" alt="Event Banner 1" />
-                    </div>
-                    <div class="banner-item">
-                        <img src="https://i.ibb.co/9kQb2chQ/Fast-Withdrawal-s-20250806-042109-0000.png" alt="Event Banner 2" />
-                    </div>
-                    <div class="banner-item">
-                        <img src="https://i.ibb.co/tpNVMDrZ/Fast-Withdrawal-s-20250806-044937-0000.png" alt="Event Banner 3" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Tabs -->
-            <div class="admin-tabs">
-                <button class="admin-tab-btn active" onclick="switchAdminTab('nominations')" id="nominationsTabBtn">
-                    <i class="fas fa-list"></i> Nominations
-                </button>
-                <button class="admin-tab-btn" onclick="switchAdminTab('voting')" id="votingTabBtn">
-                    <i class="fas fa-vote-yea"></i> Voting
-                </button>
-            </div>
-<div id="nominees-loader" style="display:none; justify-content:center; align-items:center; padding:20px;">
-  <div class="spinner"></div>
-  <span style="margin-left:10px;">Loading nominees...</span>
-</div>
-            <!-- Nominations Tab Content -->
-            <div id="nominationsTab" class="admin-tab-content section">
-                <h2><i class="fas fa-clipboard-list"></i> Nomination Management</h2>
-                
-
-                
-                <!-- Nominations Sub-tabs -->
-                <div class="nomination-sub-tabs">
-                    <button class="sub-tab-btn active" onclick="switchNominationTab('successful')" id="successfulSubTab">
-                        <i class="fas fa-check-circle"></i> Successful
-                        <span class="sub-tab-count" id="successfulCount">0</span>
-                    </button>
-                    <button class="sub-tab-btn" onclick="switchNominationTab('pending')" id="pendingSubTab">
-                        <i class="fas fa-clock"></i> Pending
-                        <span class="sub-tab-count" id="pendingCount">0</span>
-                    </button>
-                    <button class="sub-tab-btn" onclick="switchNominationTab('failed')" id="failedSubTab">
-                        <i class="fas fa-times-circle"></i> Failed
-                        <span class="sub-tab-count" id="failedCount">0</span>
-                    </button>
-                </div>
-
-                <!-- Nominations Content -->
-                <div id="nominationsContent">
-                    <!-- Nominations will be loaded here -->
-                </div>
-            </div>
-
-            <!-- Voting Tab Content -->
-            <div id="votingTab" class="admin-tab-content section" style="display: none;">
-                <h2><i class="fas fa-chart-bar"></i> Voting Statistics</h2>
-                
-                <div id="votingContent">
-                    <!-- Voting statistics will be loaded here -->
-                </div>
-            </div>
-
-            <!-- Admin Powered By -->
-            <div class="powered-by">
-                <img src="https://i.ibb.co/VpC27tbt/Rewarder-logo.png" alt="Rewarder Logo">
-                <p><strong>Powered by Rewarder</strong></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Firebase SDK -->
+    </div> <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+<script>
+    
+    // Firebase SDK Configuration and Initialization
+const firebaseConfig = {
+    apiKey: "AIzaSyDW8V2SjNITrA4LcdmeILh944mTbOKnM0c",
+    authDomain: "rewarderhub.firebaseapp.com",
+    projectId: "rewarderhub",
+    storageBucket: "rewarderhub.firebasestorage.app",
+    messagingSenderId: "85965945106",
+    appId: "1:85965945106:web:fa0a57d8968926e1041bcb",
+    measurementId: "G-F2ERB5NGN0"
+};
 
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-    <script>
-        // Firebase Configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyDW8V2SjNITrA4LcdmeILh944mTbOKnM0c",
-            authDomain: "rewarderhub.firebaseapp.com",
-            projectId: "rewarderhub",
-            storageBucket: "rewarderhub.firebasestorage.app",
-            messagingSenderId: "85965945106",
-            appId: "1:85965945106:web:fa0a57d8968926e1041bcb",
-            measurementId: "G-F2ERB5NGN0"
-        };
-
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const storage = firebase.storage();
-
-        // Categories with nominees (Nulass Awards)
+// Categories with nominees (Nulass Awards)
 const nominationCategories = {
     'staylite_of_year': {
         name: 'Staylite of the Year',
@@ -2744,76 +1813,7 @@ const nominationCategories = {
 };
 
 
-        // Global Variables
-        let currentUser = null;
-        let selectedNominations = {};
-        let multipleSelectionEnabled = true;
-        let nomineeData = {};
-        let isLoginMode = false;
-        let isAdmin = false;
-        let profileImageBase64 = null;
-        let paymentScreenshotBase64 = null;
-
-        // Admin credentials
-        const adminEmails = ['rewarderprivate@gmail.com', 'bashorunidris19@gmail.com'];
-        const adminPassword = 'Admin001';
-
-        // DOM Elements
-        const registrationSection = document.getElementById('registrationSection');
-        const categorySection = document.getElementById('categorySection');
-        const detailsSection = document.getElementById('detailsSection');
-        const loadingScreen = document.getElementById('loadingScreen');
-
-        // Initialize Application
-        document.addEventListener('DOMContentLoaded', function() {
-            setupEventListeners();
-            renderCategories();
-            initScrollToTop();
-            
-            // Auth state listener
-            auth.onAuthStateChanged(user => {
-                if (user && !isAdmin) {
-                    console.log('User authenticated:', user.email);
-                    currentUser = user;
-                    document.getElementById('userLogoutBtn').style.display = 'block';
-                } else if (!user) {
-                    console.log('User signed out');
-                    document.getElementById('userLogoutBtn').style.display = 'none';
-                }
-            });
-            
-            console.log('Firebase Auth:', auth ? 'Initialized' : 'Not initialized');
-            console.log('Firebase DB:', db ? 'Initialized' : 'Not initialized');
-        });
-
-        // Debug function - call from browser console: testLogin('email@test.com', 'password')
-        window.testLogin = async function(email, password) {
-            console.log('Testing login with:', email);
-            try {
-                const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                console.log('Login test successful:', userCredential.user.email);
-                return userCredential.user;
-            } catch (error) {
-                console.error('Login test failed:', error.code, error.message);
-                return error;
-            }
-        }
-
-        // Debug function to check current mode
-        window.checkAuthMode = function() {
-            console.log('Current auth mode:', isLoginMode ? 'LOGIN' : 'REGISTER');
-            return isLoginMode;
-        }
-
-        function setupEventListeners() {
-            document.getElementById('registrationForm').addEventListener('submit', handleRegistration);
-            document.getElementById('proceedToDetails').addEventListener('click', showDetailsSection);
-            document.getElementById('proceedToPayment').addEventListener('click', handleSubmission);
-            document.getElementById('nomineeImage').addEventListener('change', handleImagePreview);
-            document.getElementById('paymentScreenshot').addEventListener('change', handleScreenshotPreview);
-        }
-
-        // Scroll to Top Functionality
+ // Scroll to Top Functionality
         function initScrollToTop() {
             const scrollUpBtn = document.getElementById('scrollToTop');
             const scrollDownBtn = document.getElementById('scrollDown');
@@ -2851,1221 +1851,572 @@ const nominationCategories = {
                 behavior: 'smooth'
             });
         }
+        
+// Global Variables
+let selectedNominee = null;
+let selectedCategory = null;
+let currentVoteCount = 1;
 
-        // Auth Mode Toggle Function
-        function toggleAuthMode(mode) {
-            isLoginMode = (mode === 'login');
-            console.log('Toggle auth mode:', mode, 'isLoginMode:', isLoginMode);
-            
-            // Update buttons
-            const loginBtn = document.getElementById('loginModeBtn');
-            const registerBtn = document.getElementById('registerModeBtn');
-            
-            if (isLoginMode) {
-                loginBtn.classList.remove('btn-secondary');
-                loginBtn.classList.add('btn-success');
-                registerBtn.classList.remove('btn-success');
-                registerBtn.classList.add('btn-secondary');
-            } else {
-                registerBtn.classList.remove('btn-secondary');
-                registerBtn.classList.add('btn-success');
-                loginBtn.classList.remove('btn-success');
-                loginBtn.classList.add('btn-secondary');
-            }
-            
-            // Update title and description
-            const authTitleIcon = document.querySelector('#authTitle i');
-            const authTitleText = document.getElementById('authTitleText');
-            const authDescText = document.getElementById('authDescText');
-            const passwordLabel = document.getElementById('passwordLabel');
-            const userPasswordInput = document.getElementById('userPassword');
-            const confirmPasswordGroup = document.getElementById('confirmPasswordGroup');
-            const authSubmitText = document.getElementById('authSubmitText');
-            const authSwitchText = document.getElementById('authSwitchText');
-            const authSwitchLink = document.getElementById('authSwitchLink');
-            
-            const confirmPasswordInput = document.getElementById('confirmPassword');
-            
-            if (isLoginMode) {
-                authTitleIcon.className = 'fas fa-sign-in-alt';
-                authTitleText.textContent = 'Login to Your Account';
-                authDescText.textContent = 'Welcome back! Login to continue with your nomination.';
-                passwordLabel.textContent = 'Password';
-                userPasswordInput.placeholder = 'Enter your password';
-                confirmPasswordGroup.style.display = 'none';
-                confirmPasswordInput.required = false;
-                authSubmitText.textContent = 'Login & Continue';
-                authSwitchText.textContent = "Don't have an account?";
-                authSwitchLink.textContent = 'Register here';
-                authSwitchLink.onclick = () => toggleAuthMode('register');
-            } else {
-                authTitleIcon.className = 'fas fa-user-plus';
-                authTitleText.textContent = 'Nominee Registration';
-                authDescText.textContent = 'Create your account to participate in the Nulass Awards nomination process.';
-                passwordLabel.textContent = 'Password';
-                userPasswordInput.placeholder = 'Create a secure password';
-                confirmPasswordGroup.style.display = 'block';
-                confirmPasswordInput.required = true;
-                authSubmitText.textContent = 'Continue to Categories';
-                authSwitchText.textContent = 'Already have an account?';
-                authSwitchLink.textContent = 'Login here';
-                authSwitchLink.onclick = () => toggleAuthMode('login');
-            }
-            
-            // Clear form and image data
-            document.getElementById('registrationForm').reset();
-            profileImageBase64 = null;
-            paymentScreenshotBase64 = null;
-            document.getElementById('imagePreview').innerHTML = '';
-            document.getElementById('screenshotPreview').innerHTML = '';
-        }
+// Flutterwave Configuration - Replace with your production key
+const FLUTTERWAVE_PUBLIC_KEY = 'FLWPUBK-d3902fdb2f80f41ada9c077eb569466a-X';
 
-        // Show Success Modal
-        function showSuccessModal(message, documentId, totalAmount) {
-            const modal = document.getElementById('successModal');
-            const messageElement = document.getElementById('successMessage');
-            
-            messageElement.innerHTML = `
-                Document ID: ${documentId}<br>
-                Total Amount: ₦${totalAmount.toLocaleString()}<br><br>
-                ${message}
-            `;
-            
-            modal.style.display = 'block';
-            
-            // Auto close after 10 seconds
-            setTimeout(() => {
-                closeSuccessModal();
-            }, 10000);
-        }
+// Initialize Application
+document.addEventListener('DOMContentLoaded', function() {
+    renderCategories();
+    setupEventListeners();
+    loadVoteCounts();
+});
 
-        function closeSuccessModal() {
-            document.getElementById('successModal').style.display = 'none';
-            location.reload();
-        }
+function setupEventListeners() {
+    document.getElementById('voteCount').addEventListener('input', updateVoteSummary);
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') closeVoteModal();
+    });
+}
 
-        // Progress Step Management
-        function updateProgressSteps(activeStep) {
-            const steps = ['step1', 'step2', 'step3', 'step4'];
-            steps.forEach((stepId, index) => {
-                const step = document.getElementById(stepId);
-                step.classList.remove('active', 'completed');
-                
-                if (index < activeStep - 1) {
-                    step.classList.add('completed');
-                } else if (index === activeStep - 1) {
-                    step.classList.add('active');
-                }
+
+// Toggle category list dropdown
+document.getElementById("categoryMenuBtn").addEventListener("click", () => {
+    const dropdown = document.getElementById("categoryDropdown");
+    dropdown.style.display = dropdown.style.display === "flex" ? "none" : "flex";
+});
+
+// Populate category dropdown
+function renderCategoryDropdown() {
+    const dropdown = document.getElementById("categoryDropdown");
+    dropdown.innerHTML = '';
+    Object.entries(nominationCategories).forEach(([id, data]) => {
+        const btn = document.createElement("button");
+        btn.textContent = data.name;
+        btn.onclick = () => {
+            document.getElementById(`card-${id}`).scrollIntoView({ behavior: "smooth" });
+            dropdown.style.display = "none";
+        };
+        dropdown.appendChild(btn);
+    });
+}
+
+function renderCategories() {
+    const grid = document.getElementById('categoriesGrid');
+    grid.innerHTML = '';
+
+    Object.entries(nominationCategories).forEach(([categoryId, categoryData]) => {
+        const categoryCard = document.createElement('div');
+        categoryCard.className = 'category-card';
+        categoryCard.id = `card-${categoryId}`;
+
+        // Remove vote count display
+        const nomineesHtml = categoryData.nominees.map((nominee, index) => `
+            <div class="nominee-item" onclick="openVoteModal('${categoryId}', ${index})">
+                <div class="nominee-info">
+                    <div class="nominee-name">${nominee.name}</div>
+                </div>
+            </div>
+        `).join('');
+
+        categoryCard.innerHTML = `
+            <div class="category-title" onclick="toggleCategory('${categoryId}')">
+                ${categoryData.name}
+            </div>
+            <div class="nominees-list" id="nominees-${categoryId}">
+                ${nomineesHtml}
+            </div>
+        `;
+
+        grid.appendChild(categoryCard);
+    });
+
+    renderCategoryDropdown();
+}
+        
+
+// Modal Functions
+function openVoteModal(categoryId, nomineeIndex) {
+    selectedCategory = categoryId;
+    selectedNominee = nomineeIndex;
+    
+    const nominee = nominationCategories[categoryId].nominees[nomineeIndex];
+    const category = nominationCategories[categoryId];
+    
+    document.getElementById('modalNomineeInfo').innerHTML = `
+        <h4><i class="fas fa-user"></i> ${nominee.name}</h4>
+        <p><strong>Category:</strong> ${category.name}</p>
+        
+    `;
+    
+    document.getElementById('voterName').value = '';
+    document.getElementById('voterEmail').value = '';
+    document.getElementById('voteCount').value = 1;
+    updateVoteSummary();
+    
+    document.getElementById('voteModal').style.display = 'block';
+    setTimeout(() => document.getElementById('voterName').focus(), 100);
+}
+
+function closeVoteModal() {
+    document.getElementById('voteModal').style.display = 'none';
+    selectedNominee = null;
+    selectedCategory = null;
+}
+
+// Payment Processing with Simplified Error Handling
+function processPayment() {
+    if (!validateForm()) return;
+
+    const voterName = document.getElementById('voterName').value.trim();
+    const voterEmail = document.getElementById('voterEmail').value.trim();
+    const voteCount = parseInt(document.getElementById('voteCount').value) || 1;
+    
+    const nominee = nominationCategories[selectedCategory].nominees[selectedNominee];
+    const category = nominationCategories[selectedCategory];
+    const amount = voteCount * 50;
+    const txRef = 'nulass_vote_' + Date.now();
+    
+    togglePayButton(true);
+    
+    // Simplified Flutterwave Configuration
+    FlutterwaveCheckout({
+        public_key: FLUTTERWAVE_PUBLIC_KEY,
+        tx_ref: txRef,
+        amount: amount,
+        currency: "NGN",
+        payment_options: "card, ussd",
+        customer: {
+            email: voterEmail,
+            name: voterName,
+        },
+        customizations: {
+            title: "Nulass Awards Voting",
+            description: `Vote for ${nominee.name}`,
+            logo: "https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg",
+        },
+        callback: function(response) {
+            handlePaymentCallback(response, {
+                voterName,
+                voterEmail, 
+                nominee: nominee.name,
+                category: category.name,
+                categoryId: selectedCategory,
+                nomineeIndex: selectedNominee,
+                voteCount,
+                amount,
+                txRef
             });
+        },
+        onclose: function() {
+            togglePayButton(false);
         }
+    });
+}
 
-        // Registration/Login Handler
-        async function handleRegistration(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('userEmail').value.trim();
-            const password = document.getElementById('userPassword').value;
-            
-            // Basic validation
-            if (!email) {
-                showAlert('Please enter your email address.', 'error');
-                return;
-            }
+// Simplified Payment Callback Handler
+function handlePaymentCallback(response, voteData) {
+    if (response.status === "successful") {
+        saveVoteToFirebase(response, voteData);
+    } else {
+        showAlert('Payment failed. Please try again.', 'error');
+        togglePayButton(false);
+    }
+}
 
-            if (!password) {
-                showAlert('Please enter your password.', 'error');
-                return;
-            }
-
-            // Validation for registration mode
-            if (!isLoginMode) {
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                
-                if (password.length < 6) {
-                    showAlert('Password must be at least 6 characters long.', 'error');
-                    return;
-                }
-                
-                if (password !== confirmPassword) {
-                    showAlert('Passwords do not match. Please try again.', 'error');
-                    return;
-                }
-            }
-
-            try {
-                showLoading(true);
-                console.log('Auth mode:', isLoginMode ? 'LOGIN' : 'REGISTER', 'Email:', email);
-
-                // Check for admin credentials first
-                if (isLoginMode && adminEmails.includes(email.toLowerCase()) && password === adminPassword) {
-                    console.log('Admin login detected');
-                    isAdmin = true;
-                    currentUser = { email: email, isAdmin: true };
-                    showAlert('Admin access granted! Redirecting to admin dashboard...', 'success');
-                    
-                    // Hide user sections and show admin dashboard
-                    setTimeout(() => {
-                        showAdminDashboard();
-                    }, 1500);
-                    
-                    showLoading(false);
-                    return;
-                }
-
-                if (isLoginMode) {
-                    // Regular user login mode
-                    console.log('Attempting regular user login...');
-                    try {
-                        const userCredential = await auth.signInWithEmailAndPassword(email, password);
-                        currentUser = userCredential.user;
-                        isAdmin = false;
-                        console.log('Login successful:', currentUser.email);
-                        showAlert('Welcome back! Please select your nomination categories.', 'success');
-                    } catch (loginError) {
-                        console.error('Login error:', loginError.code, loginError.message);
-                        if (loginError.code === 'auth/user-not-found') {
-                            showAlert('No account found with this email. Please register first.', 'error');
-                        } else if (loginError.code === 'auth/wrong-password') {
-                            showAlert('Incorrect password. Please try again.', 'error');
-                        } else if (loginError.code === 'auth/invalid-email') {
-                            showAlert('Please enter a valid email address.', 'error');
-                        } else if (loginError.code === 'auth/too-many-requests') {
-                            showAlert('Too many failed attempts. Please try again later.', 'error');
-                        } else {
-                            showAlert('Login failed: ' + loginError.message, 'error');
-                        }
-                        throw loginError;
-                    }
-                } else {
-                    // Registration mode - try to create account
-                    try {
-                        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-                        currentUser = userCredential.user;
-                        showAlert('Account created successfully! Please select your nomination categories.', 'success');
-                    } catch (registerError) {
-                        if (registerError.code === 'auth/email-already-in-use') {
-                            showAlert('An account with this email already exists. Please login instead.', 'error');
-                        } else if (registerError.code === 'auth/invalid-email') {
-                            showAlert('Please enter a valid email address.', 'error');
-                        } else if (registerError.code === 'auth/weak-password') {
-                            showAlert('Password is too weak. Please use a stronger password.', 'error');
-                        } else {
-                            showAlert('Registration failed: ' + registerError.message, 'error');
-                        }
-                        throw registerError;
-                    }
-                }
-
-                // Move to category selection
-                registrationSection.style.display = 'none';
-                categorySection.style.display = 'block';
-                updateProgressSteps(2);
-                
-                // Show logout button for regular users
-                if (!isAdmin) {
-                    document.getElementById('userLogoutBtn').style.display = 'block';
-                }
-
-            } catch (error) {
-                console.error('Authentication error:', error);
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Render Categories
-        function renderCategories() {
-            const grid = document.getElementById('categoriesGrid');
-            grid.innerHTML = '';
-
-            Object.entries(nominationCategories).forEach(([categoryId, categoryData]) => {
-                const categoryCard = document.createElement('div');
-                categoryCard.className = 'category-card';
-                
-                const nomineesHtml = categoryData.nominees.map((nominee, index) => `
-                    <div class="nominee-item" data-category="${categoryId}" data-nominee="${index}">
-                        <div class="custom-radio">
-                            <input type="radio" name="${categoryId}" value="${index}" id="${categoryId}_${index}">
-                            <span class="radio-checkmark"></span>
-                        </div>
-                        <div class="nominee-info">
-                            <div class="nominee-name">${nominee.name}</div>
-                        </div>
-                    </div>
-                `).join('');
-
-                categoryCard.innerHTML = `
-                    <div class="category-title">${categoryData.name}</div>
-                    <div class="nominees-list">
-                        ${nomineesHtml}
-                    </div>
-                `;
-
-                // Add event listeners
-                const radioButtons = categoryCard.querySelectorAll('input[type="radio"]');
-                radioButtons.forEach(radio => {
-                    radio.addEventListener('change', handleNomineeSelection);
-                });
-
-                const nomineeItems = categoryCard.querySelectorAll('.nominee-item');
-                nomineeItems.forEach(item => {
-                    item.addEventListener('click', function(e) {
-                        if (e.target.type !== 'radio') {
-                            const radio = item.querySelector('input[type="radio"]');
-                            const categoryId = radio.name;
-                            const nomineeIndex = parseInt(radio.value);
-                            
-                            // Check if this radio is already selected
-                            if (radio.checked) {
-                                // Unselect it
-                                unselectNominee(categoryId, item);
-                            } else {
-                                // Select it
-                                selectNominee(categoryId, nomineeIndex, item);
-                            }
-                        }
-                    });
-                });
-
-                grid.appendChild(categoryCard);
-                });
-                }
-
-                // Select Nominee Function
-                function selectNominee(categoryId, nomineeIndex, nomineeItem) {
-        const nominee = nominationCategories[categoryId].nominees[nomineeIndex];
-        const radio = nomineeItem.querySelector('input[type="radio"]');
+// Simplified Firebase Save Operation
+async function saveVoteToFirebase(paymentResponse, voteData) {
+    try {
+        showLoading(true);
         
-        // If multiple selection is disabled, clear all other selections
-        if (!multipleSelectionEnabled && Object.keys(selectedNominations).length >= 1 && !selectedNominations[categoryId]) {
-            clearAllSelections(false); // Don't show alert
-        }
-        
-        // Add current selection
-        selectedNominations[categoryId] = {
-            nominee: nominee.name,
-            category: nominationCategories[categoryId].name,
-            nomineeIndex: nomineeIndex
+        const voteRecord = {
+            voter: {
+                name: voteData.voterName,
+                email: voteData.voterEmail
+            },
+            vote: {
+                nominee: voteData.nominee,
+                category: voteData.category,
+                count: voteData.voteCount
+            },
+            payment: {
+                amount: voteData.amount,
+                txRef: voteData.txRef,
+                flwRef: paymentResponse.transaction_id,
+                status: paymentResponse.status
+            },
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
         };
 
+        await db.collection('nulass_voting').add(voteRecord);
+        
+        // Update local vote count
+        const nominee = nominationCategories[voteData.categoryId].nominees[voteData.nomineeIndex];
+        nominee.votes = (nominee.votes || 0) + voteData.voteCount;
+        
         // Update UI
-        radio.checked = true;
-        nomineeItem.classList.add('selected');
+        updateVoteDisplay(voteData.categoryId, voteData.nomineeIndex);
+        closeVoteModal();
+        showAlert(`Successfully voted for ${voteData.nominee}!`, 'success');
         
-        // Clear other selections in same category
-        document.querySelectorAll(`[data-category="${categoryId}"]`).forEach(item => {
-            if (item !== nomineeItem) {
-                item.classList.remove('selected');
-                item.querySelector('input[type="radio"]').checked = false;
-            }
-        });
-
-        updateSelectionDisplay();
-        updatePaymentCalculation();
-        console.log(`Selected: ${categoryId} - ${nominee.name}`);
+    } catch (error) {
+        console.error('Error saving vote:', error);
+        showAlert('Error recording vote. Please contact support.', 'error');
+    } finally {
+        showLoading(false);
+        togglePayButton(false);
     }
-
-    // Unselect Nominee Function (no notification)
-    function unselectNominee(categoryId, nomineeItem) {
-        const radio = nomineeItem.querySelector('input[type="radio"]');
-        
-        // Remove selection
-        delete selectedNominations[categoryId];
-        radio.checked = false;
-        nomineeItem.classList.remove('selected');
-
-        updateSelectionDisplay();
-        updatePaymentCalculation();
-        updateSelectedCategoriesSummary();
-        
-        console.log(`Unselected: ${categoryId}`);
-    }
-
-    // Clear All Selections
-    function clearAllSelections(showAlert = true) {
-        selectedNominations = {};
-        
-        // Clear all radio buttons and visual selections
-        document.querySelectorAll('.nominee-item').forEach(item => {
-            item.classList.remove('selected');
-            item.querySelector('input[type="radio"]').checked = false;
-        });
-
-        updateSelectionDisplay();
-        updatePaymentCalculation();
-        updateSelectedCategoriesSummary();
-        
-        if (showAlert) {
-            showAlert('All selections cleared', 'info');
-        }
-    }
-
-    // Handle Nominee Selection (keeping for radio button events)
-    function handleNomineeSelection(e) {
-            const categoryId = e.target.name;
-            const nomineeIndex = parseInt(e.target.value);
-            const nominee = nominationCategories[categoryId].nominees[nomineeIndex];
-            const nomineeItem = e.target.closest('.nominee-item');
-            
-            // Check if this nominee is already selected (for deselection)
-            if (selectedNominations[categoryId] && selectedNominations[categoryId].nomineeIndex === nomineeIndex) {
-                // Deselect the nominee
-                delete selectedNominations[categoryId];
-                e.target.checked = false;
-                nomineeItem.classList.remove('selected');
-                
-                updateSelectionDisplay();
-                updatePaymentCalculation();
-                return;
-            }
-            
-            // If multiple selection is disabled and we already have a selection
-            if (!multipleSelectionEnabled && Object.keys(selectedNominations).length >= 1 && !selectedNominations[categoryId]) {
-                // Clear all previous selections
-                Object.keys(selectedNominations).forEach(prevCategoryId => {
-                    delete selectedNominations[prevCategoryId];
-                    document.querySelectorAll(`[data-category="${prevCategoryId}"]`).forEach(item => {
-                        item.classList.remove('selected');
-                        item.querySelector('input[type="radio"]').checked = false;
-                    });
-                });
-            }
-            
-            // Add current selection
-            selectedNominations[categoryId] = {
-                nominee: nominee.name,
-                category: nominationCategories[categoryId].name,
-                nomineeIndex: nomineeIndex
-            };
-
-            // Update UI
-            updateSelectionDisplay();
-            updatePaymentCalculation();
-            
-            // Update visual selection for this category
-            document.querySelectorAll(`[data-category="${categoryId}"]`).forEach(item => {
-                item.classList.remove('selected');
-            });
-            nomineeItem.classList.add('selected');
-        }
-
-        // Toggle Multiple Selection
-        function toggleMultipleSelection() {
-            multipleSelectionEnabled = !multipleSelectionEnabled;
-            const btn = document.getElementById('multiSelectBtn');
-            const text = document.getElementById('selectionModeText');
-            
-            if (multipleSelectionEnabled) {
-                btn.innerHTML = '<i class="fas fa-check"></i> Disable Multiple Selection';
-                btn.classList.remove('btn-secondary');
-                btn.classList.add('btn-success');
-                text.textContent = 'Multiple categories enabled';
-            } else {
-                btn.innerHTML = '<i class="fas fa-check-square"></i> Enable Multiple Selection';
-                btn.classList.remove('btn-success');
-                btn.classList.add('btn-secondary');
-                text.textContent = 'Single category mode';
-                
-                // Keep only the first selection
-                const keys = Object.keys(selectedNominations);
-                if (keys.length > 1) {
-                    const firstKey = keys[0];
-                    const firstSelection = selectedNominations[firstKey];
-                    selectedNominations = { [firstKey]: firstSelection };
-                    
-                    // Update UI
-                    document.querySelectorAll('input[type="radio"]').forEach(radio => {
-                        if (radio.name !== firstKey) {
-                            radio.checked = false;
-                            radio.closest('.nominee-item').classList.remove('selected');
-                        }
-                    });
-                }
-            }
-            
-            updateSelectionDisplay();
-            updatePaymentCalculation();
-        }
-
-        // Update Selection Display
-        function updateSelectionDisplay() {
-            const count = Object.keys(selectedNominations).length;
-            const counter = document.getElementById('selectionCounter');
-            const fixedCounter = document.getElementById('fixedCounter');
-            const proceedBtn = document.getElementById('proceedToDetails');
-            
-            document.getElementById('selectedCount').textContent = count;
-            document.getElementById('fixedSelectedCount').textContent = count;
-            
-            if (count > 0) {
-                counter.style.display = 'block';
-                fixedCounter.style.display = 'block';
-                proceedBtn.style.display = 'block';
-            } else {
-                counter.style.display = 'none';
-                fixedCounter.style.display = 'none';
-                proceedBtn.style.display = 'none';
-            }
-        }
-
-        // Update Payment Calculation
-        function updatePaymentCalculation() {
-            const categoryCount = Object.keys(selectedNominations).length;
-            const subtotal = categoryCount * 1000;
-            const serviceFee = categoryCount * 50;
-            const processingFee = categoryCount * 100;
-            const total = subtotal + serviceFee + processingFee;
-            
-            document.getElementById('categoryCount').textContent = categoryCount;
-            document.getElementById('subtotalAmount').textContent = subtotal.toLocaleString();
-            document.getElementById('serviceFeeAmount').textContent = serviceFee.toLocaleString();
-            document.getElementById('processingFeeAmount').textContent = processingFee.toLocaleString();
-            document.getElementById('totalAmount').textContent = total.toLocaleString();
-            document.getElementById('bankTransferAmount').textContent = total.toLocaleString();
-        }
-
-        // Show Details Section
-        function showDetailsSection() {
-            updateSelectedCategoriesSummary();
-            categorySection.style.display = 'none';
-            detailsSection.style.display = 'block';
-            updateProgressSteps(3);
-        }
-
-        // Update Selected Categories Summary
-        function updateSelectedCategoriesSummary() {
-            const summaryList = document.getElementById('selectedCategoriesList');
-            summaryList.innerHTML = '';
-
-            Object.entries(selectedNominations).forEach(([categoryId, data]) => {
-                const item = document.createElement('div');
-                item.className = 'selected-category-item';
-                item.innerHTML = `
-                    <span><strong>${data.category}:</strong> Supporting ${data.nominee}</span>
-                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
-                `;
-                summaryList.appendChild(item);
-            });
-        }
-
-        // Navigation Functions
-        function goBackToCategories() {
-            detailsSection.style.display = 'none';
-            categorySection.style.display = 'block';
-            updateProgressSteps(2);
-        }
-
-        function proceedToPaymentSection() {
-            // Validate name and profile image first
-            const name = document.getElementById('nomineeName').value.trim();
-            const imageFile = document.getElementById('nomineeImage').files[0];
-            
-            if (!name) {
-                showAlert('Please enter your full name!', 'error');
-                return;
-            }
-            
-            if (!imageFile || !profileImageBase64) {
-                showAlert('Please upload your profile image!', 'error');
-                return;
-            }
-            
-            // Update payment calculation
-            updatePaymentCalculation();
-            
-            // Show payment section
-            detailsSection.style.display = 'none';
-            document.getElementById('paymentSection').style.display = 'block';
-            updateProgressSteps(4);
-        }
-
-        function goBackToDetails() {
-            document.getElementById('paymentSection').style.display = 'none';
-            detailsSection.style.display = 'block';
-            updateProgressSteps(3);
-        }
-
-        // Handle Image Preview
-        function handleImagePreview(e) {
-            const file = e.target.files[0];
-            const preview = document.getElementById('imagePreview');
-            
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                    showAlert('Image size should be less than 5MB', 'error');
-                    e.target.value = '';
-                    profileImageBase64 = null;
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    profileImageBase64 = e.target.result; // Store base64 data
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Profile Preview" class="image-preview">`;
-                    console.log('Profile image converted to base64');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                profileImageBase64 = null;
-                preview.innerHTML = '';
-            }
-        }
-
-        // Handle Screenshot Preview
-        function handleScreenshotPreview(e) {
-            const file = e.target.files[0];
-            const preview = document.getElementById('screenshotPreview');
-            
-            if (file) {
-                if (file.size > 5 * 1024 * 1024) { // 5MB limit
-                    showAlert('Screenshot size should be less than 5MB', 'error');
-                    e.target.value = '';
-                    paymentScreenshotBase64 = null;
-                    return;
-                }
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    paymentScreenshotBase64 = e.target.result; // Store base64 data
-                    preview.innerHTML = `<img src="${e.target.result}" alt="Payment Screenshot" class="image-preview">`;
-                    console.log('Payment screenshot converted to base64');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                paymentScreenshotBase64 = null;
-                preview.innerHTML = '';
-            }
-        }
-
-
-
-        // Handle Submission
-        async function handleSubmission() {
-            console.log('🚀 Starting nomination submission...');
-            
-            // Get form data
-            const name = document.getElementById('nomineeName').value.trim();
-            const imageFile = document.getElementById('nomineeImage').files[0];
-            const screenshotFile = document.getElementById('paymentScreenshot').files[0];
-            
-            console.log('📋 Form data:', { name, imageFile: imageFile?.name, screenshotFile: screenshotFile?.name });
-            
-            // Enhanced validation
-            if (!name) {
-                showAlert('Please enter your full name!', 'error');
-                return;
-            }
-            
-            if (!imageFile || !profileImageBase64) {
-                showAlert('Please upload your profile image!', 'error');
-                return;
-            }
-            
-            if (!screenshotFile || !paymentScreenshotBase64) {
-                showAlert('Please upload your payment screenshot!', 'error');
-                return;
-            }
-
-            // Show loading immediately
-            showLoading(true);
-            
-            try {
-                // Calculate payment details
-                const categoryCount = Object.keys(selectedNominations).length;
-                const baseAmount = categoryCount * 1000;
-                const serviceFee = categoryCount * 50;
-                const processingFee = categoryCount * 100;
-                const totalAmount = baseAmount + serviceFee + processingFee;
-                
-                // Save with base64 image data
-                const docData = {
-                    nomineeName: name,
-                    email: currentUser?.email || document.getElementById('userEmail').value,
-                    selectedNominations: selectedNominations,
-                    profileImageName: imageFile.name,
-                    profileImageBase64: profileImageBase64,
-                    paymentScreenshotName: screenshotFile.name,
-                    paymentScreenshotBase64: paymentScreenshotBase64,
-                    bankName: 'First Bank of Nigeria',
-                    categoryCount: categoryCount,
-                    paymentDetails: {
-                        baseAmount: baseAmount,
-                        serviceFee: serviceFee,
-                        processingFee: processingFee,
-                        totalAmount: totalAmount
-                    },
-                    submissionStatus: 'pending_verification',
-                    paymentMethod: 'bank_transfer',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    status: 'submitted'
-                };
-
-                console.log('💾 Saving to ssohisnomination collection with base64 images...');
-                
-                // Save directly to Firebase
-                const docRef = await db.collection('ssohisnomination').add(docData);
-                
-                console.log('✅ Saved with document ID:', docRef.id);
-                
-                // Stop loading
-                showLoading(false);
-                
-                // Show success modal instead of alert
-                showSuccessModal(
-                    'Your nomination has been successfully submitted and saved to our database.',
-                    docRef.id,
-                    totalAmount
-                );
-                
-                // Move to final step
-                updateProgressSteps(4);
-                
-            } catch (error) {
-                console.error('❌ Submission failed:', error);
-                showLoading(false);
-                showAlert('Error: ' + error.message, 'error');
-            }
-        }
-
-
-
-
-
-        // Validate Nominee Form
-        function validateNomineeForm() {
-            const name = document.getElementById('nomineeName').value.trim();
-            const imageFile = document.getElementById('nomineeImage').files[0];
-            const screenshotFile = document.getElementById('paymentScreenshot').files[0];
-            
-            if (!name) {
-                showAlert('Please enter your full name.', 'error');
-                return false;
-            }
-            
-            if (!imageFile) {
-                showAlert('Please upload your profile image or brand logo.', 'error');
-                return false;
-            }
-            
-            if (!screenshotFile) {
-                showAlert('Payment screenshot is required! Please upload your bank transfer confirmation.', 'error');
-                return false;
-            }
-            
-            if (Object.keys(selectedNominations).length === 0) {
-                showAlert('Please select at least one category.', 'error');
-                return false;
-            }
-            
-            return true;
-        }
-
-        // Show Alert
-        function showAlert(message, type) {
-            const alertDiv = document.createElement('div');
-            alertDiv.className = `alert alert-${type}`;
-            alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i> ${message}`;
-            
-            document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
-            
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 6000);
-        }
-
-        // Show Loading
-        function showLoading(show) {
-            loadingScreen.style.display = show ? 'block' : 'none';
-        }
-
-        // ==================== ADMIN FUNCTIONS ====================
-
-        // Show Admin Dashboard
-        function showAdminDashboard() {
-            // Hide user interface
-            document.querySelector('.container').style.display = 'none';
-            
-            // Show admin dashboard
-            document.getElementById('adminDashboard').style.display = 'block';
-            
-            // Set admin email
-            document.getElementById('adminEmail').textContent = currentUser.email;
-            
-            // Load initial data
-            loadNominations();
-            
-            console.log('Admin dashboard loaded');
-        }
-
-        // User Logout
-        function logoutUser() {
-            if (confirm('Are you sure you want to logout? Your progress will be lost.')) {
-                // Reset all user data
-                currentUser = null;
-                selectedNominations = {};
-                profileImageBase64 = null;
-                paymentScreenshotBase64 = null;
-                isAdmin = false;
-                isLoginMode = false;
-                
-                // Hide logout button
-                document.getElementById('userLogoutBtn').style.display = 'none';
-                
-                // Show registration section and hide others
-                registrationSection.style.display = 'block';
-                categorySection.style.display = 'none';
-                detailsSection.style.display = 'none';
-                
-                // Reset progress steps
-                updateProgressSteps(1);
-                
-                // Reset auth form
-                toggleAuthMode('register');
-                document.getElementById('registrationForm').reset();
-                
-                // Clear image previews
-                document.getElementById('imagePreview').innerHTML = '';
-                document.getElementById('screenshotPreview').innerHTML = '';
-                
-                // Clear selection displays
-                updateSelectionDisplay();
-                updatePaymentCalculation();
-                
-                // Sign out from Firebase if signed in
-                if (auth.currentUser) {
-                    auth.signOut().catch(error => console.error('Firebase signout error:', error));
-                }
-                
-                showAlert('Logged out successfully. Please login again to continue.', 'info');
-                console.log('User logged out');
-            }
-        }
-
-        // Admin Logout
-        function logoutAdmin() {
-            if (confirm('Are you sure you want to logout?')) {
-                // Reset variables
-                currentUser = null;
-                isAdmin = false;
-                isLoginMode = false;
-                
-                // Hide admin dashboard
-                document.getElementById('adminDashboard').style.display = 'none';
-                
-                // Show user interface
-                document.querySelector('.container').style.display = 'block';
-                
-                // Reset auth form
-                toggleAuthMode('register');
-                document.getElementById('registrationForm').reset();
-                
-                // Sign out from Firebase if signed in
-                if (auth.currentUser) {
-                    auth.signOut().catch(error => console.error('Firebase signout error:', error));
-                }
-                
-                showAlert('Admin logged out successfully', 'info');
-                console.log('Admin logged out');
-            }
-        }
-
-        // Switch Admin Tabs
-        function switchAdminTab(tabName) {
-            // Update tab buttons
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(tabName + 'TabBtn').classList.add('active');
-            
-            // Show/hide tab content
-            document.querySelectorAll('.admin-tab-content').forEach(content => {
-                content.style.display = 'none';
-            });
-            document.getElementById(tabName + 'Tab').style.display = 'block';
-            
-            // Load data based on tab
-            if (tabName === 'nominations') {
-                loadNominations();
-            } else if (tabName === 'voting') {
-                loadVotingStats();
-            }
-        }
-
-        // Switch Nomination Sub-tabs
-        let currentNominationTab = 'pending';
-        function switchNominationTab(status) {
-            currentNominationTab = status;
-            
-            // Update sub-tab buttons
-            document.querySelectorAll('.sub-tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.getElementById(status + 'SubTab').classList.add('active');
-            
-            // Filter and display nominations
-            displayNominationsByStatus(status);
-        }
-
-        // Load Nominations from Firebase
-        let allNominations = [];
-        async function loadNominations() {
-            try {
-                console.log('Loading nominations...');
-                const snapshot = await db.collection('ssohisnomination').get();
-                allNominations = [];
-                
-                snapshot.forEach(doc => {
-                    allNominations.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-                
-                console.log('Loaded nominations:', allNominations.length);
-                
-                // Update counts
-                updateNominationCounts();
-                
-                // Display current tab
-                displayNominationsByStatus(currentNominationTab);
-                
-            } catch (error) {
-                console.error('Error loading nominations:', error);
-                showAlert('Error loading nominations: ' + error.message, 'error');
-            }
-        }
-
-        // Update Nomination Counts
-        function updateNominationCounts() {
-            const successful = allNominations.filter(n => n.submissionStatus === 'successful').length;
-            const pending = allNominations.filter(n => n.submissionStatus === 'pending' || n.submissionStatus === 'pending_verification').length;
-            const failed = allNominations.filter(n => n.submissionStatus === 'failed').length;
-            
-            document.getElementById('successfulCount').textContent = successful;
-            document.getElementById('pendingCount').textContent = pending;
-            document.getElementById('failedCount').textContent = failed;
-        }
-
-        // Display Nominations by Status
-        function displayNominationsByStatus(status) {
-            const content = document.getElementById('nominationsContent');
-            let filteredNominations = [];
-            
-            if (status === 'successful') {
-                filteredNominations = allNominations.filter(n => n.submissionStatus === 'successful');
-            } else if (status === 'pending') {
-                filteredNominations = allNominations.filter(n => 
-                    n.submissionStatus === 'pending' || n.submissionStatus === 'pending_verification');
-            } else if (status === 'failed') {
-                filteredNominations = allNominations.filter(n => n.submissionStatus === 'failed');
-            }
-            
-            if (filteredNominations.length === 0) {
-                content.innerHTML = `
-                    <div style="text-align: center; padding: 50px; opacity: 0.6;">
-                        <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 20px; color: #B7410E;"></i>
-                        <h3>No ${status} nominations found</h3>
-                        <p>There are currently no nominations with ${status} status.</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            content.innerHTML = filteredNominations.map((nomination, index) => `
-                <div class="nomination-item">
-                    <div class="nomination-header">
-                        <div class="nomination-info">
-                            <h3>${nomination.nomineeName || 'Unknown Nominee'}</h3>
-                            <span class="status-badge status-${status}">${status.toUpperCase()}</span>
-                        </div>
-                        <div class="nomination-actions">
-                            ${generateActionButtons(nomination.id, status)}
-                        </div>
-                    </div>
-                    
-                    <!-- Compact View (Always Visible) -->
-                    <div class="nomination-summary">
-                        <div class="summary-grid">
-                            <div class="summary-item">
-                                <span class="summary-label">Email:</span>
-                                <span class="summary-value">${nomination.email || 'N/A'}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Categories:</span>
-                                <span class="summary-value">${Object.keys(nomination.selectedNominations || {}).length}</span>
-                            </div>
-                            <div class="summary-item">
-                                <span class="summary-label">Amount:</span>
-                                <span class="summary-value">₦${nomination.paymentDetails?.totalAmount?.toLocaleString() || 'N/A'}</span>
-                            </div>
-                        </div>
-                        <button class="details-toggle-btn" onclick="toggleNominationDetails('${nomination.id}')">
-                            <i class="fas fa-chevron-down"></i> Show Full Details
-                        </button>
-                    </div>
-                    
-                    <!-- Expanded View (Initially Hidden) -->
-                    <div class="nomination-full-details" id="details-${nomination.id}" style="display: none;">
-                        <div class="nomination-details">
-                            <div class="detail-item">
-                                <div class="detail-label">Email Address</div>
-                                <div class="detail-value">${nomination.email || 'N/A'}</div>
-                            </div>
-                           
-                            <div class="detail-item">
-                                <div class="detail-label">Total Categories</div>
-                                <div class="detail-value">${Object.keys(nomination.selectedNominations || {}).length}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Total Amount</div>
-                                <div class="detail-value">₦${nomination.paymentDetails?.totalAmount?.toLocaleString() || 'N/A'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Submission Date</div>
-                                <div class="detail-value">${nomination.timestamp ? new Date(nomination.timestamp.seconds * 1000).toLocaleDateString() : 'N/A'}</div>
-                            </div>
-                            <div class="detail-item">
-                                <div class="detail-label">Payment Method</div>
-                                <div class="detail-value">${nomination.paymentMethod || 'Bank Transfer'}</div>
-                            </div>
-                        </div>
-
-                        <!-- Images Section -->
-                        <div class="images-section">
-                            <h4 style="color: #B7410E; margin-bottom: 15px;"><i class="fas fa-images"></i> Uploaded Files</h4>
-                            <div class="image-grid">
-                                <div class="image-item">
-                                    <div class="image-label">Profile Image</div>
-                                    <div class="image-preview-container">
-                                        ${nomination.profileImageBase64 ? `
-                                            <img src="${nomination.profileImageBase64}" alt="Profile" style="max-width: 100px; max-height: 100px; border-radius: 8px; object-fit: cover;">
-                                        ` : `
-                                            <div class="image-placeholder">
-                                                <i class="fas fa-user"></i>
-                                                <span>${nomination.profileImageName || 'No image'}</span>
-                                            </div>
-                                        `}
-                                        <button class="download-btn" onclick="downloadImage('${nomination.id}', 'profile')" title="Download Profile Image" ${!nomination.profileImageBase64 ? 'disabled' : ''}>
-                                            <i class="fas fa-download"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="image-item">
-                                    <div class="image-label">Payment Screenshot</div>
-                                    <div class="image-preview-container">
-                                        ${nomination.paymentScreenshotBase64 ? `
-                                            <img src="${nomination.paymentScreenshotBase64}" alt="Payment" style="max-width: 100px; max-height: 100px; border-radius: 8px; object-fit: cover;">
-                                        ` : `
-                                            <div class="image-placeholder">
-                                                <i class="fas fa-receipt"></i>
-                                                <span>${nomination.paymentScreenshotName || 'No screenshot'}</span>
-                                            </div>
-                                        `}
-                                        <button class="download-btn" onclick="downloadImage('${nomination.id}', 'payment')" title="Download Payment Screenshot" ${!nomination.paymentScreenshotBase64 ? 'disabled' : ''}>
-                                            <i class="fas fa-download"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Selected Categories -->
-                        <div class="categories-section">
-                            <h4 style="color: #B7410E; margin-bottom: 15px;"><i class="fas fa-list"></i> Selected Categories</h4>
-                            <div class="categories-list">
-                                ${Object.entries(nomination.selectedNominations || {}).map(([catId, catData]) => `
-                                    <div class="category-detail-item">
-                                        <div class="category-name">${catData.category}</div>
-                                        <div class="nominee-supported">Supporting: <strong>${catData.nominee}</strong></div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Generate Action Buttons Based on Status
-        function generateActionButtons(nominationId, currentStatus) {
-            if (currentStatus === 'pending') {
-                return `
-                    <button class="action-btn btn-approve" onclick="changeNominationStatus('${nominationId}', 'successful')">
-                        <i class="fas fa-check"></i> Successful
-                    </button>
-                    <button class="action-btn btn-reject" onclick="changeNominationStatus('${nominationId}', 'failed')">
-                        <i class="fas fa-times"></i> Failed
-                    </button>
-                `;
-            } else if (currentStatus === 'successful') {
-                return `
-                    <button class="action-btn btn-revoke" onclick="changeNominationStatus('${nominationId}', 'pending')">
-                        <i class="fas fa-undo"></i> Revoke to Pending
-                    </button>
-                    <button class="action-btn btn-revoke" onclick="changeNominationStatus('${nominationId}', 'failed')">
-                        <i class="fas fa-undo"></i> Revoke to Failed
-                    </button>
-                `;
-            } else if (currentStatus === 'failed') {
-                return `
-                    <button class="action-btn btn-revoke" onclick="changeNominationStatus('${nominationId}', 'pending')">
-                        <i class="fas fa-undo"></i> Revoke to Pending
-                    </button>
-                    <button class="action-btn btn-revoke" onclick="changeNominationStatus('${nominationId}', 'successful')">
-                        <i class="fas fa-undo"></i> Revoke to Successful
-                    </button>
-                `;
-            }
-        }
-
-        // Change Nomination Status
-        async function changeNominationStatus(nominationId, newStatus) {
-            const statusText = newStatus.charAt(0).toUpperCase() + newStatus.slice(1);
-            
-            if (!confirm(`Are you sure you want to change this nomination status to ${statusText}?`)) {
-                return;
-            }
-            
-            try {
-                showLoading(true);
-                
-                await db.collection('ssohisnomination').doc(nominationId).update({
-                    submissionStatus: newStatus,
-                    lastModified: firebase.firestore.FieldValue.serverTimestamp(),
-                    modifiedBy: currentUser.email
-                });
-                
-                showAlert(`Nomination status changed to ${statusText}`, 'success');
-                
-                // Reload nominations
-                await loadNominations();
-                
-            } catch (error) {
-                console.error('Error updating status:', error);
-                showAlert('Error updating nomination status: ' + error.message, 'error');
-            } finally {
-                showLoading(false);
-            }
-        }
-
-        // Toggle Nomination Details
-        function toggleNominationDetails(nominationId) {
-            const detailsDiv = document.getElementById(`details-${nominationId}`);
-            const button = detailsDiv.previousElementSibling.querySelector('.details-toggle-btn');
-            const icon = button.querySelector('i');
-            
-            if (detailsDiv.style.display === 'none') {
-                detailsDiv.style.display = 'block';
-                icon.className = 'fas fa-chevron-up';
-                button.innerHTML = '<i class="fas fa-chevron-up"></i> Hide Details';
-            } else {
-                detailsDiv.style.display = 'none';
-                icon.className = 'fas fa-chevron-down';
-                button.innerHTML = '<i class="fas fa-chevron-down"></i> Show Full Details';
-            }
-        }
-
-        // Download Image Function
-        async function downloadImage(nominationId, imageType) {
-            try {
-                const nomination = allNominations.find(n => n.id === nominationId);
-                if (!nomination) {
-                    showAlert('Nomination not found', 'error');
-                    return;
-                }
-
-                let base64Data = '';
-                let fileName = '';
-                
-                if (imageType === 'profile') {
-                    base64Data = nomination.profileImageBase64;
-                    fileName = nomination.profileImageName || 'profile-image.jpg';
-                } else if (imageType === 'payment') {
-                    base64Data = nomination.paymentScreenshotBase64;
-                    fileName = nomination.paymentScreenshotName || 'payment-screenshot.jpg';
-                }
-
-                if (!base64Data) {
-                    showAlert(`No ${imageType} image found for this nomination`, 'error');
-                    return;
-                }
-
-                // Create download link from base64 data
-                const link = document.createElement('a');
-                link.href = base64Data;
-                link.download = `${nomination.nomineeName || 'nominee'}_${fileName}`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showAlert(`Downloaded ${imageType} image: ${fileName}`, 'success');
-                console.log(`Downloaded ${imageType} image for:`, nomination.nomineeName);
-                
-            } catch (error) {
-                console.error('Error downloading image:', error);
-                showAlert('Error downloading image: ' + error.message, 'error');
-            }
-        }
-// Loader toggle
-function showNomineeLoader(show) {
-  const loader = document.getElementById("nominees-loader");
-  if (loader) loader.style.display = show ? "flex" : "none";
 }
 
-// Fetch nominees for admin
-async function loadNomineesFromFirestore() {
-  const snapshot = await getDocs(collection(db, "nominees"));
-  let categories = {};
-  
-  snapshot.forEach(doc => {
-    const data = doc.data();
-    if (!categories[data.category]) {
-      categories[data.category] = { name: data.category, nominees: [] };
-    }
-    categories[data.category].nominees.push({ name: data.name });
-  });
+// Improved Error Handling for Form Validation
+function validateForm() {
+    const voterName = document.getElementById('voterName').value.trim();
+    const voterEmail = document.getElementById('voterEmail').value.trim();
+    const voteCount = parseInt(document.getElementById('voteCount').value) || 0;
 
-  return categories;
+    if (!voterName) {
+        showAlert('Please enter your name', 'error');
+        return false;
+    }
+
+    if (!voterEmail || !isValidEmail(voterEmail)) {
+        showAlert('Please enter a valid email address', 'error');
+        return false;
+    }
+
+    if (voteCount < 1) {
+        showAlert('Please enter at least 1 vote', 'error');
+        return false;
+    }
+
+    if (voteCount > 100) {
+        showAlert('Maximum 100 votes allowed per transaction', 'error');
+        return false;
+    }
+
+    return true;
 }
 
-        // Load Voting Statistics
-        async function loadVotingStats() {
-            try {
-                console.log('Loading voting statistics...');
-                
-                // For now, show a placeholder as voting system isn't implemented yet
-                document.getElementById('votingContent').innerHTML = `
-                    <div class="section">
-                        <h3><i class="fas fa-chart-pie"></i> Voting Statistics by Category</h3>
-                        <div style="text-align: center; padding: 50px; opacity: 0.6;">
-                            <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 20px; color: #B7410E;"></i>
-                            <h3>Voting System Coming Soon</h3>
-                            <p>Voting statistics will be displayed here once the voting phase begins.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="section">
-                        <h3><i class="fas fa-users"></i> Nominee Performance</h3>
-                        <div style="text-align: center; padding: 50px; opacity: 0.6;">
-                            <i class="fas fa-trophy" style="font-size: 3rem; margin-bottom: 20px; color: #B7410E;"></i>
-                            <h3>Performance Metrics</h3>
-                            <p>Individual nominee voting performance will be shown here.</p>
-                        </div>
-                    </div>
-                `;
-                
-            } catch (error) {
-                console.error('Error loading voting stats:', error);
-                showAlert('Error loading voting statistics: ' + error.message, 'error');
+// Helper Functions
+function togglePayButton(disabled) {
+    const payButton = document.getElementById('payNowBtn');
+    payButton.disabled = disabled;
+    payButton.innerHTML = disabled ? 
+        '<i class="fas fa-spinner fa-spin"></i> Processing...' : 
+        '<i class="fas fa-credit-card"></i> Pay & Vote Now';
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        ${message}
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    setTimeout(() => alertDiv.remove(), 5000);
+}
+
+function showLoading(show) {
+    const loadingScreen = document.getElementById('loadingScreen');
+    if (loadingScreen) {
+        loadingScreen.style.display = show ? 'block' : 'none';
+    }
+}
+
+
+// Vote Count Management
+async function loadVoteCounts() {
+    try {
+        const snapshot = await db.collection('nulass_voting').get();
+        
+        // Reset all vote counts
+        Object.keys(nominationCategories).forEach(categoryId => {
+            nominationCategories[categoryId].nominees.forEach(nominee => {
+                nominee.votes = 0;
+            });
+        });
+        
+        // Update votes from Firebase
+        snapshot.forEach(doc => {
+            const data = doc.data();
+            if (nominationCategories[data.categoryId]?.nominees[data.nomineeIndex]) {
+                nominationCategories[data.categoryId].nominees[data.nomineeIndex].votes += data.voteCount || 1;
+            }
+        });
+        
+        // Update UI
+        Object.keys(nominationCategories).forEach(categoryId => {
+            nominationCategories[categoryId].nominees.forEach((_, index) => {
+                updateVoteDisplay(categoryId, index);
+            });
+        });
+    } catch (error) {
+        console.error('Error loading votes:', error);
+        showAlert('Failed to load vote counts', 'error');
+    }
+}
+
+// Utility Functions
+function updateVoteDisplay(categoryId, nomineeIndex) {
+    const voteElement = document.getElementById(`votes-${categoryId}-${nomineeIndex}`);
+    if (voteElement) {
+        const votes = nominationCategories[categoryId].nominees[nomineeIndex].votes;
+        voteElement.textContent = `${votes} votes`;
+    }
+}
+
+function updateVoteSummary() {
+    const voteCount = parseInt(document.getElementById('voteCount').value) || 1;
+    const total = voteCount * 50;
+    document.getElementById('summaryVotes').textContent = voteCount;
+    document.getElementById('summaryTotal').textContent = total;
+    currentVoteCount = voteCount;
+}
+
+function togglePayButton(disabled) {
+    const payButton = document.getElementById('payNowBtn');
+    payButton.disabled = disabled;
+    payButton.innerHTML = disabled ? 
+        '<i class="fas fa-spinner fa-spin"></i> Processing...' : 
+        '<i class="fas fa-credit-card"></i> Pay & Vote Now';
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type}`;
+    alertDiv.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    setTimeout(() => alertDiv.remove(), 8000);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showLoading(show) {
+    document.getElementById('loadingScreen').style.display = show ? 'block' : 'none';
+}
+
+// Event Listeners
+window.onclick = function(event) {
+    if (event.target === document.getElementById('voteModal')) {
+        closeVoteModal();
+    }
+};
+
+// Auto-refresh votes
+setInterval(loadVoteCounts, 30000);
+
+/* ---------------------------
+   Category toggle function
+   --------------------------- */
+function toggleCategory(categoryId) {
+    const list = document.getElementById(`nominees-${categoryId}`);
+    if (!list) return;
+    const isOpen = list.classList.contains('open');
+
+    // close other open lists (optional)
+    document.querySelectorAll('.nominees-list.open').forEach(l => {
+        if (l !== list) l.classList.remove('open');
+    });
+
+    if (!isOpen) {
+        list.classList.add('open');
+        // ensure card is visible
+        const card = document.getElementById(`card-${categoryId}`);
+        if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    } else {
+        list.classList.remove('open');
+    }
+}
+
+/* ---------------------------
+   Live search setup
+   --------------------------- */
+function setupSearch() {
+    const searchBar = document.getElementById('searchBar');
+    if (!searchBar) {
+        console.warn('setupSearch: No element with id="searchBar" found.');
+        return;
+    }
+
+    // Wrap the searchBar in .search-wrapper if not already wrapped
+    let wrapper = searchBar.parentElement;
+    if (!wrapper.classList || !wrapper.classList.contains('search-wrapper')) {
+        const newWrap = document.createElement('div');
+        newWrap.className = 'search-wrapper';
+        wrapper.insertBefore(newWrap, searchBar);
+        newWrap.appendChild(searchBar);
+        wrapper = newWrap;
+    }
+
+    // Create results container if it doesn't exist
+    let results = document.getElementById('searchResults');
+    if (!results) {
+        results = document.createElement('div');
+        results.id = 'searchResults';
+        results.className = 'search-results';
+        wrapper.appendChild(results);
+    }
+
+    // Inject minimal styles for the results panel (optional: move into your CSS)
+    if (!document.getElementById('searchResultsStyles')) {
+        const style = document.createElement('style');
+        style.id = 'searchResultsStyles';
+        style.textContent = `
+            .search-wrapper { display:flex; gap:18px; align-items:flex-start; position:relative; }
+            #searchBar { flex:1; min-width:260px; }
+            .search-results {
+                width:360px;
+                max-height:420px;
+                overflow:auto;
+                background:#fff;
+                border-radius:12px;
+                box-shadow:0 10px 30px rgba(0,0,0,0.12);
+                padding:8px;
+                display:none;
+                z-index:1100;
+                border:1px solid rgba(0,0,0,0.06);
+            }
+            .search-results .result-group { margin-bottom:10px; }
+            .search-results .result-group h4 { font-size:0.95rem; margin:6px 6px; color:#333; }
+            .search-results .result { padding:8px 10px; border-radius:8px; cursor:pointer; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+            .search-results .result:hover { background: linear-gradient(90deg, rgba(183,65,14,0.06), rgba(74,144,226,0.02)); }
+            .search-results mark { background:#fff1c8; padding:0 3px; border-radius:3px; color:#B7410E; font-weight:700; }
+            .search-results .meta { opacity:0.6; font-size:0.85rem; }
+            .search-results .no-results { padding:12px; color:#666; }
+        `;
+        document.head.appendChild(style);
+    }
+
+    // helper to escape regex and highlight matches
+    const escapeForRegex = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const highlight = (text, q) => {
+        if (!q) return text;
+        const rx = new RegExp(`(${escapeForRegex(q)})`, 'ig');
+        return text.replace(rx, '<mark>$1</mark>');
+    };
+
+    // Input handler
+    searchBar.addEventListener('input', (e) => {
+        const raw = e.target.value;
+        const q = raw.trim();
+        if (!q) {
+            // hide results and show all cards
+            results.style.display = 'none';
+            document.querySelectorAll('.category-card').forEach(c => c.style.display = '');
+            return;
+        }
+        const query = q.toLowerCase();
+
+        // Collect matches
+        const matches = []; // { type:'category'|'nominee', catId, name, idx?, catName? }
+        Object.entries(nominationCategories).forEach(([catId, cat]) => {
+            if (cat.name.toLowerCase().includes(query)) {
+                matches.push({ type: 'category', catId, name: cat.name });
+            }
+            cat.nominees.forEach((n, idx) => {
+                if (n.name.toLowerCase().includes(query)) {
+                    matches.push({ type: 'nominee', catId, catName: cat.name, name: n.name, idx });
+                }
+            });
+        });
+
+        // Update visible cards: show only categories that contain matches
+        document.querySelectorAll('.category-card').forEach(card => {
+            const id = card.id.replace(/^card-/, '');
+            const has = matches.some(m => m.catId === id);
+            card.style.display = has ? '' : 'none';
+        });
+
+        // Render results panel
+        if (matches.length === 0) {
+            results.innerHTML = `<div class="no-results">No matches for "<strong>${q}</strong>"</div>`;
+            results.style.display = 'block';
+            return;
+        }
+
+        // Group matches by category
+        const grouped = {};
+        matches.forEach(m => {
+            grouped[m.catId] = grouped[m.catId] || { catName: nominationCategories[m.catId].name, items: [] };
+            grouped[m.catId].items.push(m);
+        });
+
+        let html = '';
+        Object.keys(grouped).forEach(catId => {
+            const group = grouped[catId];
+            html += `<div class="result-group"><h4>${highlight(group.catName, q)}</h4>`;
+            // show unique nominee items + category label
+            const itemsShown = [];
+            group.items.forEach(item => {
+                // avoid duplicates (e.g. category match + nominee match)
+                if (item.type === 'category') {
+                    html += `<div class="result" data-type="cat" data-cat="${catId}">${highlight(item.name, q)} <span class="meta">Category</span></div>`;
+                } else {
+                    const key = `${item.name}-${item.idx}`;
+                    if (!itemsShown.includes(key)) {
+                        itemsShown.push(key);
+                        html += `<div class="result" data-type="nom" data-cat="${catId}" data-idx="${item.idx}">${highlight(item.name, q)} <span class="meta">${item.catName}</span></div>`;
+                    }
+                }
+            });
+            html += `</div>`;
+        });
+
+        results.innerHTML = html;
+        results.style.display = 'block';
+    });
+
+    // Click handler inside results panel
+    results.addEventListener('click', (ev) => {
+        const target = ev.target.closest('.result');
+        if (!target) return;
+        const type = target.dataset.type;
+        const cat = target.dataset.cat;
+        if (type === 'cat') {
+            // scroll to category and open it
+            const card = document.getElementById(`card-${cat}`);
+            if (card) {
+                toggleCategory(cat);
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        } else {
+            const idx = Number(target.dataset.idx);
+            if (!isNaN(idx)) {
+                openVoteModal(cat, idx);
             }
         }
-    </script>
-</body>
-</html>
+        // clear search and hide
+        (document.getElementById('searchBar') || {}).value = '';
+        results.style.display = 'none';
+        // restore cards visibility
+        document.querySelectorAll('.category-card').forEach(c => c.style.display = '');
+    });
 
+    // hide panel when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!wrapper.contains(e.target)) {
+            results.style.display = 'none';
         }
-    </script>
-</body>
-</html>
+    });
+}
 
+/* ---------------------------
+   Make sure setupSearch is called
+   --------------------------- */
+document.addEventListener('DOMContentLoaded', function () {
+    // If your DOMContentLoaded already calls these, just add setupSearch() into it.
+    // I add a safe check so duplicates won't break things:
+    if (typeof renderCategories === 'function') {
+        // renderCategories(); // <-- keep only if you do not already call it earlier
+    }
+    if (typeof setupSearch === 'function') setupSearch();
+});
 
+</script>
+   </body>
+    </html>

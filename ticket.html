@@ -414,7 +414,35 @@
   </div>
 
   <script>
-    
+      // Copy account number
+    function copyAccount() {
+      const accNum = document.getElementById("accountNumber").textContent;
+      navigator.clipboard.writeText(accNum);
+      alert("Account number copied: " + accNum);
+    }
+
+    // Event countdown
+    const eventDate = new Date("September 26, 2025 17:00:00").getTime();
+    const countdownElement = document.getElementById("eventCountdown");
+
+    setInterval(() => {
+      const now = new Date().getTime();
+      const distance = eventDate - now;
+
+      if (distance <= 0) {
+        countdownElement.textContent = "🎉 Event is Live Now!";
+        return;
+      }
+
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      countdownElement.textContent = 
+        `Event starts in: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+
  // Payment popup logic
 const payBtn = document.getElementById("payBtn");
 const popup = document.getElementById("popup");

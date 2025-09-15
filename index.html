@@ -341,9 +341,10 @@
   background: #fff;
 }
 .category-card .nominees-list.open {
-  max-height: 600px;
-  opacity: 1;
-  padding: 16px;
+    max-height: 1200px; /* Increased from 600px */
+    opacity: 1;
+    padding: 16px;
+    overflow-y: auto; /* Add scrolling if content is still too tall */
 }
 
 /* Horizontal Row for Nominees */
@@ -1409,12 +1410,6 @@ const nominationCategories = {
         nominees: [
             { name: 'BFA' },
             { name: 'Abass Abdulazeez (Azjem)' },
-            { name: 'Rayman' },
-            { name: 'Olasun Kanmi' },
-            { name: 'Olotu Moses' },
-            { name: 'Scarface' },
-            { name: 'Ojikutu Peace' },
-            { name: 'Avosegamu' },
             { name: 'Awonuga' },
             { name: 'Emperor' },
             { name: 'Hon. Muhammed Ishola' },
@@ -1422,6 +1417,13 @@ const nominationCategories = {
             { name: 'Onwubadewa Ojikutu' },
             { name: 'Bami' },
             { name: 'Rotimi Cole' },
+            { name: 'Rayman' },
+            { name: 'Olasun Kanmi' },
+            { name: 'Olotu Moses' },
+            { name: 'Scarface' },
+            { name: 'Ojikutu Peace' },
+            { name: 'Avosegamu' },
+            
             { name: 'Peace Onwubadewa' }
         ]
     },
@@ -1939,7 +1941,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderCategories();
     setupEventListeners();
     loadVoteCounts();
-    
+    autoExpandLargeCategories(); 
 });
 
 function setupEventListeners() {
@@ -1968,6 +1970,18 @@ function renderCategoryDropdown() {
             dropdown.style.display = "none";
         };
         dropdown.appendChild(btn);
+    });
+}
+
+
+function autoExpandLargeCategories() {
+    Object.entries(nominationCategories).forEach(([categoryId, categoryData]) => {
+        if (categoryData.nominees.length > 8) {
+            const list = document.getElementById(`nominees-${categoryId}`);
+            if (list) {
+                list.classList.add('open');
+            }
+        }
     });
 }
 

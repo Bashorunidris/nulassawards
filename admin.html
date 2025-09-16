@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nulass Awards - Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Admin Login Modal */
+        .admin-login-modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .admin-login-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            padding: clamp(30px, 6vw, 50px);
+            border-radius: 25px;
+            width: clamp(320px, 90vw, 480px);
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 
+                0 25px 80px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(183, 65, 14, 0.1);
+            border: 3px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+        }
+
+        .admin-login-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #B7410E, #ba6123, #B94700);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .admin-login-header {
+            text-align: center;
+            margin-bottom: clamp(25px, 5vw, 40px);
+            padding-top: 10px;
+        }
+
+        .admin-login-header .admin-shield-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #B7410E, #ba6123);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(183, 65, 14, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        .admin-login-header .admin-shield-icon i {
+            font-size: 2.2rem;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .admin-login-header h2 {
+            color: #B7410E;
+            margin-bottom: 12px;
+            font-size: clamp(1.6rem, 4vw, 2rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #B7410E 0%, #ba6123 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-login-header p {
+            color: #666;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            font-weight: 500;
+            opacity: 0.8;
+            margin: 0;
+        }
+
+        .admin-form-group {
+            margin-bottom: clamp(20px, 4vw, 30px);
+        }
+
+        .admin-form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #B7410E;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .admin-form-control {
+            width: 100%;
+            padding: clamp(15px, 4vw, 20px) clamp(18px, 4vw, 25px);
+            border: 2px solid rgba(183, 65, 14, 0.15);
+            border-radius: 15px;
+            font-size: clamp(14px, 3vw, 16px);
+            font-weight: 500;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .admin-form-control:focus {
+            outline: none;
+            border-color: #B7410E;
+            box-shadow: 
+                0 0 0 4px rgba(183, 65, 14, 0.15),
+                inset 0 2px 8px rgba(0, 0, 0, 0.1);
+            background: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-admin {
+            width: 100%;
+            background: linear-gradient(135deg, #B7410E 0%, #ba6123 50%, #B94700 100%);
+            color: white;
+            border: none;
+            padding: clamp(16px, 4vw, 20px);
+            border-radius: 15px;
+            font-size: clamp(15px, 3vw, 17px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(183, 65, 14, 0.3);
+            margin-top: 10px;
+        }
+
+        .btn-admin::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(183, 65, 14, 0.4);
+        }
+
+        .btn-admin:hover::before {
+            left: 100%;
+        }
+
+        .btn-admin:active {
+            transform: translateY(-1px);
+        }
+
+        /* Main Interface Improvements */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: clamp(15px, 4vw, 30px);
+        }
+
+        .header {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: clamp(30px, 8vw, 60px);
+            align-items: center;
+            margin-bottom: clamp(30px, 8vw, 60px);
+            background: 
+                linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.9) 100%);
+            border-radius: 25px;
+            padding: clamp(30px, 6vw, 50px);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(183, 65, 14, 0.1);
+            box-shadow: 
+                0 20px 60px rgba(183, 65, 14, 0.08),
+                0 8px 25px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #B7410E, #ba6123, #B94700);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .logo {
+            width: clamp(100px, 15vw, 160px);
+            height: clamp(100px, 15vw, 160px);
+            object-fit: cover;
+            border-radius: 20px;
+            border: 4px solid #B7410E;
+            box-shadow: 
+                0 15px 35px rgba(183, 65, 14, 0.25),
+                0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .logo:hover {
+            transform: scale(1.05) rotate(2deg);
+            box-shadow: 
+                0 25px 50px rgba(183, 65, 14, 0.35),
+                0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .header-content {
+            text-align: left;
+            z-index: 2;
+            position: relative;
+        }
+
+        .event-title {
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #B7410E 0%, #ba6123 50%, #B94700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1.1;
+            text-shadow: 0 2px 4px rgba(183, 65, 14, 0.1);
+        }
+
+        .host-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(135deg, rgba(183, 65, 14, 0.15) 0%, rgba(186, 97, 35, 0.1) 100%);
+            padding: clamp(12px, 3vw, 18px) clamp(20px, 5vw, 35px);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            border: 2px solid rgba(183, 65, 14, 0.2);
+            backdrop-filter: blur(10px);
+            box-shadow: 
+                0 8px 25px rgba(183, 65, 14, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .admin-access-section {
+            background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(248,249,250,0.9) 100%);
+            padding: clamp(25px, 6vw, 40px);
+            border-radius: 20px;
+            text-align: center;
+            margin-top: 30px;
+            box-shadow: 
+                0 15px 40px rgba(183, 65, 14, 0.08),
+                0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(183, 65, 14, 0.1);
+            position: relative;
+        }
+
+        .admin-access-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #B7410E, #ba6123);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .btn-admin-access {
+            background: linear-gradient(135deg, #B7410E 0%, #ba6123 100%);
+            color: white;
+            border: none;
+            padding: clamp(15px, 4vw, 20px) clamp(25px, 6vw, 40px);
+            border-radius: 15px;
+            font-size: clamp(15px, 3vw, 18px);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 8px 25px rgba(183, 65, 14, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-admin-access::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-admin-access:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(183, 65, 14, 0.4);
+        }
+
+        .btn-admin-access:hover::before {
+            left: 100%;
+        }
+
+        /* Admin Dashboard Styles */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(183, 65, 14, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #B7410E, #ba6123, #B94700);
+        }
+
+        .admin-header-content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .admin-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .admin-logo {
+            width: 70px;
+            height: 70px;
+            border-radius: 16px;
+            border: 3px solid #B7410E;
+            box-shadow: 0 8px 20px rgba(183, 65, 14, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .admin-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .admin-title-text h1 {
+            color: #B7410E;
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #B7410E 0%, #ba6123 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .admin-title-text p {
+            color: #666;
+            margin: 8px 0 0 0;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 500;
+            opacity: 0.8;
+        }
+
+        .admin-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-export {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-logout {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Statistics Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #B7410E, #ba6123);
+        }
+
+        .stat-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #B7410E, #ba6123);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-value {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            color: #B7410E;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 600;
+        }
+
+        /* Analytics Section */
+        .analytics-section {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .analytics-title {
+            font-size: 1.8rem;
+            color: #B7410E;
+            font-weight: 700;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+
+        /* Category Cards */
+        .categories-analytics {
+            display: grid;
+            gap: 25px;
+        }
+
+        .category-analytics-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 1px solid rgba(183, 65, 14, 0.1);
+        }
+
+        .category-analytics-header {
+            background: linear-gradient(135deg, #B7410E, #ba6123);
+            color: white;
+            padding: 25px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-total-votes {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .nominees-analytics {
+            padding: 25px;
+        }
+
+        .nominee-analytics-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nominee-analytics-item.rank-1 {
+            background: linear-gradient(135deg, #ffd700, #ffed4a);
+            border: 2px solid #f39c12;
+        }
+
+        .nominee-analytics-item.rank-2 {
+            background: linear-gradient(135deg, #c0c0c0, #e5e5e5);
+            border: 2px solid #95a5a6;
+        }
+
+        .nominee-analytics-item.rank-3 {
+            background: linear-gradient(135deg, #cd7f32, #d4941e);
+            border: 2px solid #b7651d;
+        }
+
+        .nominee-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .rank-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .rank-1 .rank-badge {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+
+        .rank-2 .rank-badge {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+
+        .rank-3 .rank-badge {
+            background: linear-gradient(135deg, #b7651d, #a0522d);
+        }
+
+        .nominee-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #333;
+        }
+
+        .nominee-stats {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .vote-count {
+            font-weight: 800;
+            font-size: 1.3rem;
+            color: #B7410E;
+        }
+
+        .vote-percentage {
+            background: #B7410E;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #B7410E, #ba6123);
+            transition: width 0.5s ease;
+        }
+
+        .see-more-btn {
+            background: linear-gradient(45deg, #17a2b8, #138496);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .see-more-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(23, 162, 184, 0.3);
+        }
+
+        .hidden-nominees {
+            display: none;
+        }
+
+        .hidden-nominees.show {
+            display: block;
+        }
+
+        /* Loading Animation */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #B7410E;
+        }
+
+        .spinner {
+            border: 4px solid rgba(183, 65, 14, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #B7410E;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .admin-actions {
+                justify-content: center;
+            }
+
+            .analytics-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+
+            .nominee-analytics-item {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .nominee-stats {
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .admin-container {
+                padding: 10px;
+            }
+
+            .stat-card,
+            .analytics-section,
+            .category-analytics-card {
+                padding: 20px;
+            }
+
+            .nominees-analytics {
+                padding: 15px;
+            }
+
+            .nominee-analytics-item {
+                padding: 15px;
+            }
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: rgba(40, 167, 69, 0.1);
+            border: 1px solid rgba(40, 167, 69, 0.3);
+            color: #28a745;
+        }
+
+        .alert-error {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+            color: #dc3545;
+        }
+
+        /* Hide admin dashboard initially */
+        #adminDashboard {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="admin-login-modal">
+        <div class="admin-login-content">
+            <div class="admin-login-header">
+                <div class="admin-shield-icon">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h2>Admin Access</h2>
+                <p>Enter admin credentials to access dashboard</p>
+            </div>
+            <form id="adminLoginForm">
+                <div class="admin-form-group">
+                    <label for="adminEmail">Email Address</label>
+                    <input type="email" id="adminEmail" class="admin-form-control" placeholder="Enter admin email" required>
+                </div>
+                <div class="admin-form-group">
+                    <label for="adminPassword">Password</label>
+                    <input type="password" id="adminPassword" class="admin-form-control" placeholder="Enter admin password" required>
+                </div>
+                <button type="submit" class="btn-admin">
+                    <i class="fas fa-sign-in-alt"></i> Login to Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Voting Interface (Original) -->
+    <div id="votingInterface">
+        <div class="container">
+            <div class="header">
+                <img src="https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg" alt="Nulass Logo" class="logo">
+                <div class="header-content">
+                    <h1 class="event-title">Nulass Awards</h1>
+                    <div class="host-info">
+                        <i class="fas fa-crown"></i>
+                        Committee Chairman: <strong>Bami</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="admin-access-section">
+                <button onclick="showAdminLogin()" class="btn-admin-access">
+                    <i class="fas fa-user-shield"></i> Admin Access
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard">
+        <div class="admin-container">
+            <!-- Admin Header -->
+            <div class="admin-header">
+                <div class="admin-header-content">
+                    <div class="admin-title">
+                        <img src="https://i.ibb.co/HpBDMgvM/REWARDER-20250901-173722-0000.png" alt="Rewarder Logo" class="admin-logo">
+                        <div class="admin-title-text">
+                            <h1>Admin Dashboard</h1>
+                            <p>Nulass Awards Analytics</p>
+                        </div>
+                    </div>
+                    <button class="btn-logout" onclick="logout()">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </button>
+                    <div class="admin-actions">
+                        <button class="btn-export" onclick="exportToPDF()">
+                            <i class="fas fa-file-pdf"></i> Export PDF
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-vote-yea"></i>
+                    </div>
+                    <div class="stat-value" id="totalVotes">0</div>
+                    <div class="stat-label">Total Votes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-value" id="totalRevenue">₦0</div>
+                    <div class="stat-label">Total Revenue</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-value" id="totalVoters">0</div>
+                    <div class="stat-label">Total Voters</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="stat-value" id="totalCategories">0</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+            </div>
+
+            <!-- Analytics Section -->
+            <div class="analytics-section">
+                <div class="analytics-header">
+                    <h2 class="analytics-title">
+                        <i class="fas fa-chart-line"></i> Vote Trends Over Time
+                    </h2>
+                </div>
+                <div class="chart-container">
+                    <canvas id="votesTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Categories Analytics -->
+            <div id="categoriesAnalytics" class="categories-analytics">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Loading analytics data...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDW8V2SjNITrA4LcdmeILh944mTbOKnM0c",
+            authDomain: "rewarderhub.firebaseapp.com",
+            projectId: "rewarderhub",
+            storageBucket: "rewarderhub.firebasestorage.app",
+            messagingSenderId: "85965945106",
+            appId: "1:85965945106:web:fa0a57d8968926e1041bcb",
+            measurementId: "G-F2ERB5NGN0"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        
+
+// Categories with nominees (Nulass Awards)
+const nominationCategories = {
+    'staylite_of_year': {
+        name: 'Staylite of the Year',
+        nominees: [
+            { name: 'Bami' },
+            { name: 'Rabiu' },
+            { name: 'Hassan Yussuff' },
+            { name: 'Desire' },
+            { name: 'Ojikutu Abdullahi Abdulmal' }
+        ]
+    },
+
+    'socialite_of_year': {
+        name: 'Socialite of the Year',
+        nominees: [
+            { name: 'Bami' },
+            { name: 'Calculus Boy' },
+            { name: 'Oluhunosebi' },
+            { name: 'Lasisi Ayomide' },
+            { name: 'Sammy' }
+        ]
+    },
+
+    'socialite': {
+        name: 'Socialite of the Year - Epe Campus ',
+        nominees: [
+            { name: 'Basit Tech' }, 
+            { name: 'Mulikat' },
+            { name: 'ZainyPerk' },
+            { name: 'Aizat' },
+            { name: 'Bamzzy' },
+            { name: 'BFA' },
+            { name: 'Rayman' },
+            { name: 'Ade' },
+            { name: 'Alameen' },
+            { name: 'Hon Kenny B' },
+            { name: 'Classic' }
+        ]
+    },
+
+    'rookie': {
+        name: 'Rookie of the Year - Epe Campus',
+        nominees: [
+            { name: 'Fasasi' },
+            { name: 'Remilekun' },
+            { name: 'AKBOY' },
+            { name: 'Adeyeri Alameen' },
+            { name: 'Dhikr' },
+            { name: 'Fatimah Egusi' },
+            { name: 'Alu Zainab' },
+            { name: 'Zainy Perk' },
+            { name: 'Hammed bashorun' },
+            { name: 'Ola' },
+            { name: 'BFA' },
+            { name: 'Syx' },
+            { name: 'Abdul Kofoworola' }
+        ]
+    },
+
+    'Rookie_ikeja': {
+        name: 'Rookie of the Year - ikeja campus ',
+        nominees: [
+            { name: 'Adedeji Daniel' }
+        ]
+    },
+
+    'nulassite_of_year': {
+        name: 'Nulassite of the Year',
+        nominees: [
+            { name: 'BFA' },
+            { name: 'Abass Abdulazeez (Azjem)' },
+            { name: 'Awonuga' },
+            { name: 'Emperor' },
+            { name: 'Hon. Muhammed Ishola' },
+            { name: 'Sulamon Oyinlakan' },
+            { name: 'Onwubadewa Ojikutu' },
+            { name: 'Bami' },
+            { name: 'Rotimi Cole' },
+            { name: 'Rayman' },
+            { name: 'Olasun Kanmi' },
+            { name: 'Olotu Moses' },
+            { name: 'Scarface' },
+            { name: 'Ojikutu Peace' },
+            { name: 'Semande Senapon Avosegamu' },
+            
+            { name: 'Peace Onwubadewa' }
+        ]
+    },
+
+    'executive_ojo': {
+        name: 'Executive of the Year - OJO Campus',
+        nominees: [
+            { name: 'Desire' },
+            { name: 'Rofiat' },
+            { name: 'Olohunosebi ' },
+            { name: 'Odu Portrait' },
+            { name: 'Habeeb Lamina' },
+            { name: 'Emperor' },
+            { name: 'Japhar' },
+            { name: 'Olamide' },
+            { name: 'Moyosore' },
+            { name: 'Scarface' },
+            { name: 'Hakeem' },
+            { name: "Dunedain" }
+        ]
+    },
+
+    'executive_ikeja': {
+        name: 'Executive of the Year-Ikeja Campus',
+        nominees: [
+            { name: 'Alameen' },
+            { name: 'Lawson Michael Olaiya' }
+        ]
+    },
+
+    'executive': {
+        name: 'Executive of the Year - Epe Campus ',
+        nominees: [
+            { name: 'Hafsah' },
+            { name: 'Bolanle' },
+            { name: 'ZainyPerk' },
+            { name: 'Bamzzy' },
+            { name: 'BFA' },
+            { name: 'Adeyeri' },
+            { name: 'Alameen' }
+        ]
+    },
+
+    'parliamentarian_of_year': {
+        name: 'Parliamentarian of the Year',
+        nominees: [
+            { name: 'Rayman' },
+            { name: 'Scarface' },
+            { name: 'Hameed Bashorun' },
+            { name: 'Ishola' },
+            { name: 'Da Silva' },
+            { name: 'Hon. Ayobami' },
+            { name: 'Ololunosebi' },
+            { name: 'Ogunbiyi Yewande' },
+            { name: 'Justice' },
+            { name: 'Rashidat Sulamon' },
+            { name: 'Olasunkanmi Owoyemi' },
+            { name: 'Hussien Onwonlu' },
+            { name: 'Hon. Yusuf Olatunji' }
+        ]
+    },
+
+    'most_supportive': {
+        name: 'Most Supportive',
+        nominees: [
+            { name: 'Olasunkan Owoyemi' },
+            { name: 'Rafahhh (Welfare)' },
+            { name: 'Sulaimon Oyinlakasola' }
+        ]
+    },
+
+    'clique_of_year': {
+        name: 'Clique of the Year',
+        nominees: [
+            { name: 'Oluhunosebi' },
+            { name: 'Babatunde Rufai' },
+            { name: 'The Family ' },
+            { name: 'Emperor' }
+        ]
+    },
+
+    'mostExpensive': {
+        name: 'Most Expensive - Epe Campus',
+        nominees: [
+            { name: 'Azjem' },
+            { name: 'Teddy' },
+            { name: 'Classic' },
+            { name: 'Tande' },
+            { name: 'BFA' },
+            { name: 'Bamzzy' },
+            { name: 'Azeza' },
+            { name: 'Yung' },
+            { name: 'Quawiy' },
+            { name: 'Abdulazeez Abass' }
+        ]
+    },
+
+'mostluxurious': {
+        name: 'Most Luxurious ',
+        nominees: [
+           
+            
+            { name: 'Acelord' }
+        ]
+    },
+
+
+
+    'humanitarian_male': {
+        name: 'Humanitarian of the Year (Male)',
+        nominees: [
+            { name: 'Emperor' },
+            { name: 'Babatunde Rufai' },
+            { name: 'Oluhunosebi' },
+            { name: 'Ishola' },
+            { name: 'Bami' },
+            { name: 'BFA' },
+            { name: 'Semande Senapon Avosegamu' }
+        ]
+    },
+
+    'humanitarian_female': {
+        name: 'Humanitarian of the Year (Female)',
+        nominees: [
+            { name: 'Semande Senapon Avosegamu' },
+            { name: 'Aminat' },
+            { name: 'Omowunmi Abibat' },
+            { name: 'Alliuzanaiyan' }
+        ]
+    },
+
+    'humanitarian': {
+        name: 'Humanitarian of the Year - Epe Campus',
+        nominees: [
+            { name: 'BFA' },
+            { name: 'Egi' },
+            { name: 'Kuti' },
+            { name: 'Bamzzy' },
+            { name: 'Zainyperk' },
+            { name: 'Hon Kenny B' },
+            { name: 'Aliu Zainab' }
+        ]
+    },
+
+    'Humanitarian Of the Year (Ikeja Campus)': {
+        name: 'Humanitarian Of the Year-Ikeja Campus',
+        nominees: [
+            { name: 'Shittabey Timilehin Sulaimon ' }
+        ]
+    },
+
+    'most_active_external': {
+        name: 'Most Active External Campus',
+        nominees: [
+            { name: 'Ikeya' },
+            { name: 'Epe' },
+            { name: 'Ojo' }
+        ]
+    },
+
+    'finalist': {
+        name: 'Finalist of the Year - Epe Campus',
+        nominees: [
+            { name: 'Azjem' },
+            { name: 'BFA' },
+            { name: 'Balogun Ololade' },
+            { name: 'Rayman' },
+            { name: 'Maryam' },
+            { name: 'Omofo' },
+            { name: 'Rabiu Hameedat' },
+            { name: 'Azezat' },
+            { name: 'Adams' },
+            { name: 'Jasmine' },
+            { name: 'Adam the first' },
+            { name: 'Desire' },
+            { name: 'Rofiat' },
+            { name: 'Aminat' },
+            { name: 'Mulikat' },
+            { name: 'Rt Hon Hassan' },
+            { name: 'Balogun Farouk' },
+            { name: 'Crownstar' },
+            { name: 'Pheesy' }
+        ]
+    },
+
+    'Finalist_general': {
+        name: 'Finalist of the Year - ojo campus ',
+        nominees: [
+            { name: 'Desire' },
+            { name: 'Rofiat' },
+            { name: 'Rt hon Hassan' },
+            { name: 'Hussein' },
+            { name: 'Aminat' },
+            { name: 'Crownstar' },
+            { name: 'Pheesy' }
+        ]
+    },
+
+    'Finalist of the Year (Ikeja Campus)*': {
+        name: 'Finalist of the Year-ikeja Campus ',
+        nominees: [
+            { name: 'Abdulrahman Habeebat' }
+        ]
+    },
+
+    'alumni_of_year': {
+        name: 'Alumni of the Year',
+        nominees: [
+            { name: 'Senator Rahmon Saheed' },
+            { name: 'Adenle Sabur' },
+            { name: 'Temi Tope' }
+        ]
+    },
+
+    'couple_of_year': {
+        name: 'Couple of the Year',
+        nominees: [
+            { name: 'Scar Face and Babe' }
+        ]
+    },
+
+    'program_of_year': {
+        name: 'Program of the Year',
+        nominees: [
+            { name: 'Eko Parapo' },
+            { name: 'Ibile Week' },
+            { name: 'Epe Legislative Confer' },
+            { name: 'ELC 4.0' }
+        ]
+    },
+
+    'most_reserved': {
+        name: 'Most Reserved Nulassite',
+        nominees: [
+            { name: 'Olasunkanmi Owoyemi' },
+            { name: 'Oluhunosebi' },
+            { name: 'Omidiji Esther' },
+            { name: 'Ishola' },
+            { name: 'Omowunmi' }
+        ]
+    },
+
+    'most_popular': {
+        name: 'Most Popular Nulassite',
+        nominees: [
+            { name: 'Scar Face' },
+            { name: 'Oluhunosebi' },
+            { name: 'Abass Mulikat' },
+            { name: 'Desire' },
+            { name: 'Emperor' },
+            { name: 'Hon Kenny B' },
+            { name: 'Akachukwu Ezekiel' }
+        ]
+    },
+
+    'mostPopular': {
+        name: 'Most Popular Student-Epe Campus',
+        nominees: [
+            { name: 'Mulikat' },
+            { name: 'Azezat' },
+            { name: 'T and C' },
+            { name: 'BFG' },
+            { name: 'Bamzzy' },
+            { name: 'Zainy Perk' }
+        ]
+    },
+
+    'scholar': {
+        name: 'Scholar of the Year - Epe Campus',
+        nominees: [
+            { name: 'Adeyemi Roheemah' },
+            { name: 'Ajibowu Abdulbasit' },
+            { name: 'Openipo' },
+            { name: 'Classic' },
+            { name: 'Zainy Rock' },
+            { name: 'Bamzzy' },
+            { name: 'Alu Zainab' },
+            { name: 'Oloade' },
+            { name: 'Stixx' },
+            { name: 'BFA' }
+        ]
+    },
+
+    'brand_of_year': {
+        name: 'Brand of the Year',
+        nominees: [
+            { name: 'Ay Chops' },
+            { name: 'Rewarder (Ismart DC)' },
+            { name: 'Olatunwa Shawarma' },
+            { name: 'Accessories with Aminah' },
+            { name: 'Faithie Nails' }
+        ]
+    },
+
+    'entrepreneur_of_year': {
+        name: 'Entrepreneur of the Year',
+        nominees: [
+            { name: 'Imary Cakes' },
+            { name: 'Bashorun Idris (Rewarder - Ismart)' },
+            { name: 'Sir Babatunde Senator Materials' }
+        ]
+    },
+
+    'most_talented': {
+        name: 'Most Talented Nulassite',
+        nominees: [
+            { name: 'Phleomzy' },
+            { name: 'Roferat' },
+            { name: 'Olokunosebi' },
+            { name: 'Calculus Boy' },
+            { name: 'Akachukwu Ezekiel' },
+            { name: 'Bami' },
+            { name: 'Overyomi' }
+        ]
+    },
+
+    'content_creator': {
+        name: 'Content Creator of the Year',
+        nominees: [
+            { name: 'Aanu Adeniyi' },
+            { name: 'Oluwagbenga' },
+            { name: 'Phleomzy' }
+        ]
+    },
+
+    'division_president': {
+        name: 'Division President of the Year',
+        nominees: [
+            { name: 'Yussuff Ibraheem' },
+            { name: 'Crownstar' },
+            { name: 'Balogun Aminat' },
+            { name: 'Lanre' },
+            { name: 'Justice' },
+            { name: 'Olowolayewo' },
+            { name: 'Desire' },
+            { name: 'BFA' }
+        ]
+    },
+
+    'division_speaker': {
+        name: 'Division Speaker of the Year',
+        nominees: [
+            { name: 'Maryam Rabi' },
+            { name: 'Zulaykan' },
+            { name: 'Ogunbiyi Hafsah' },
+            { name: 'Akorede' }
+        ]
+    },
+
+    'political_icon_main': {
+        name: 'Political Icon',
+        nominees: [
+            { name: 'Paramole' },
+            { name: 'Oluhunosebi' },
+            { name: 'Anjorin Desire' },
+            { name: 'Ogunbiyi Hafsah' },
+            { name: 'Hon. Hassan Yusuf Olatunji' },
+            { name: 'Emperor' },
+            { name: 'Hon. Muhammed Ishola' }
+        ]
+    },
+
+    'political_icon_epe': {
+        name: 'Political Icon - Epe Campus',
+        nominees: [
+            { name: 'Azjem' },
+            { name: 'Balogun Saheed' },
+            { name: 'Rayman' },
+            { name: 'Mulikat' },
+            { name: 'Nani' },
+            { name: 'ZainyPerk' },
+            { name: 'Aizat' },
+            { name: 'Bamzzy' },
+            { name: 'Balogun' },
+            { name: 'BFA' },
+            { name: 'Rabiuhan' },
+            { name: 'Farouq Balogun' }
+        ]
+    },
+
+    'political_icon_ikeja': {
+        name: 'Political Icon - Ikeja Campus',
+        nominees: [
+            { name: 'Lawson Michael Olaiya ' }
+        ]
+    },
+
+    'fresher_male': {
+        name: 'Fresher of the Year (Male)',
+        nominees: [
+            { name: 'Khalifa' },
+            { name: 'Oladimeji' },
+            { name: 'Sharwama' },
+            { name: 'Babatunde Rufai' },
+            { name: 'Akachukwu Ezekiel' },
+            { name: 'Matto' },
+            { name: 'Nifemi' },
+            { name: 'Ags Nukass' }
+        ]
+    },
+
+    'fresher_female': {
+        name: 'Fresher of the Year (Female)',
+        nominees: [
+            { name: 'Reece Ojikutu' },
+            { name: 'Nwuko Sharon' },
+            { name: 'Oyindamola' },
+            { name: 'Kayo' },
+            { name: 'Tolunimi' },
+            { name: 'Aifamog' }
+        ]
+    },
+
+    'sportsman_male': {
+        name: 'Sportsman of the Year (Male)',
+        nominees: [
+            { name: 'Olasunkanmi Owoyemi' },
+            { name: 'Balo' },
+            { name: 'Launchman' },
+            { name: 'Hakeem' },
+            { name: 'Jago' },
+            { name: 'Oluhunosebi' },
+            { name: 'Samtech' },
+            { name: 'Geraldino' },
+            { name: 'Solo of Lasu' }
+        ]
+    },
+
+    'sportsman_female': {
+        name: 'Sportsman of the Year (Female)',
+        nominees: [
+            { name: 'Victoria (Vhee)' },
+            { name: 'Kaybee' },
+            { name: 'Ajuwaga Oluwa Tubisiba' },
+            { name: 'Smiles' },
+            { name: 'Kayo' },
+            { name: 'Rabiu Maryam' }
+        ]
+    },
+
+    'sportsman': {
+        name: 'Sportsman of the Year - Epe Campus',
+        nominees: [
+            { name: 'Balo' },
+            { name: 'Launchman' },
+            { name: 'Bolarinwa' },
+            { name: 'Tunde' },
+            { name: 'Classic' },
+            { name: 'Zainyperk' },
+            { name: 'Lynx' },
+            { name: 'Ilias' },
+            { name: 'Emmanuel' },
+            { name: 'BFA' },
+            { name: 'Azezat' }
+        ]
+    },
+
+    'most_beautiful': {
+        name: 'Most Beautiful',
+        nominees: [
+            { name: 'Kofoworola' },
+            { name: 'Baruwa Haleemahmi' },
+            { name: 'Rabiu Hameedat' },
+            { name: 'Balogun Azeezat' },
+            { name: 'Mulikat' },
+            { name: 'Balogun Aminat' },
+            { name: 'Rofiat' },
+             { name: 'Desire' },
+              { name: 'Nimat' },
+            { name: 'Omowunmi' },
+            { name: 'Oyindamola' },
+            { name: 'Mbadwe Chiamaka' },
+            { name: 'Feyishola' }
+        ]
+    }
+};
+
+        // Global Variables
+        let adminData = {};
+        let votesTrendChart = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup admin login form
+            document.getElementById('adminLoginForm').addEventListener('submit', handleAdminLogin);
+        });
+
+        function showAdminLogin() {
+            document.getElementById('adminLoginModal').style.display = 'block';
+            document.getElementById('adminEmail').focus();
+        }
+
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('adminEmail').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+            
+            // Check credentials
+            if (email === 'rewarderprivate@gmail.com' && password === 'admin001') {
+                document.getElementById('adminLoginModal').style.display = 'none';
+                showAdminDashboard();
+            } else {
+                showAlert('Invalid credentials. Please try again.', 'error');
+            }
+        }
+
+        function showAdminDashboard() {
+            document.getElementById('votingInterface').style.display = 'none';
+            document.getElementById('adminDashboard').style.display = 'block';
+            
+            // Load admin data
+            loadAdminData();
+            
+            // Setup real-time updates
+            setupRealTimeUpdates();
+        }
+
+        function logout() {
+            document.getElementById('adminDashboard').style.display = 'none';
+            document.getElementById('votingInterface').style.display = 'block';
+            
+            // Clear form
+            document.getElementById('adminEmail').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        async function loadAdminData() {
+            try {
+                const snapshot = await db.collection('nulass_voting').get();
+                
+                // Process data
+                adminData = {
+                    totalVotes: 0,
+                    totalRevenue: 0,
+                    voters: new Set(),
+                    categories: {},
+                    dailyVotes: {},
+                    voterDemographics: {}
+                };
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const voteCount = data.voteCount || 1;
+                    const amount = data.paymentAmount || (voteCount * 50);
+                    
+                    // Aggregate totals
+                    adminData.totalVotes += voteCount;
+                    adminData.totalRevenue += amount;
+                    adminData.voters.add(data.voterEmail);
+                    
+                    // Category data
+                    const categoryId = data.categoryId;
+                    const nomineeIndex = data.nomineeIndex;
+                    
+                    if (!adminData.categories[categoryId]) {
+                        adminData.categories[categoryId] = {};
+                    }
+                    
+                    if (!adminData.categories[categoryId][nomineeIndex]) {
+                        adminData.categories[categoryId][nomineeIndex] = {
+                            name: data.nominee,
+                            votes: 0
+                        };
+                    }
+                    
+                    adminData.categories[categoryId][nomineeIndex].votes += voteCount;
+                    
+                    // Daily votes for trend chart
+                    const timestamp = data.timestamp?.toDate() || new Date(data.createdAt);
+                    const dateKey = timestamp.toDateString();
+                    
+                    if (!adminData.dailyVotes[dateKey]) {
+                        adminData.dailyVotes[dateKey] = 0;
+                    }
+                    adminData.dailyVotes[dateKey] += voteCount;
+                });
+
+                // Update UI
+                updateStatistics();
+                createVotesTrendChart();
+                renderCategoriesAnalytics();
+
+            } catch (error) {
+                console.error('Error loading admin data:', error);
+                showAlert('Failed to load admin data', 'error');
+            }
+        }
+
+        function updateStatistics() {
+            document.getElementById('totalVotes').textContent = adminData.totalVotes.toLocaleString();
+            document.getElementById('totalRevenue').textContent = `₦${adminData.totalRevenue.toLocaleString()}`;
+            document.getElementById('totalVoters').textContent = adminData.voters.size.toLocaleString();
+            document.getElementById('totalCategories').textContent = Object.keys(nominationCategories).length;
+        }
+
+        function createVotesTrendChart() {
+            const ctx = document.getElementById('votesTrendChart').getContext('2d');
+            
+            // Prepare data for chart
+            const sortedDates = Object.keys(adminData.dailyVotes).sort((a, b) => new Date(a) - new Date(b));
+            const labels = sortedDates.map(date => new Date(date).toLocaleDateString());
+            const data = sortedDates.map(date => adminData.dailyVotes[date]);
+
+            if (votesTrendChart) {
+                votesTrendChart.destroy();
+            }
+
+            votesTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Daily Votes',
+                        data: data,
+                        borderColor: '#B7410E',
+                        backgroundColor: 'rgba(183, 65, 14, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#B7410E',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return Number.isInteger(value) ? value : null;
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(0,0,0,0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderCategoriesAnalytics() {
+            const container = document.getElementById('categoriesAnalytics');
+            container.innerHTML = '';
+
+            Object.entries(nominationCategories).forEach(([categoryId, categoryData]) => {
+                const categoryVotes = adminData.categories[categoryId] || {};
+                
+                // Calculate total votes for this category
+                let totalCategoryVotes = 0;
+                Object.values(categoryVotes).forEach(nominee => {
+                    totalCategoryVotes += nominee.votes || 0;
+                });
+
+                // Sort nominees by vote count
+                const sortedNominees = categoryData.nominees.map((nominee, index) => ({
+                    ...nominee,
+                    originalIndex: index,
+                    votes: categoryVotes[index]?.votes || 0
+                })).sort((a, b) => b.votes - a.votes);
+
+                // Create category card
+                const categoryCard = document.createElement('div');
+                categoryCard.className = 'category-analytics-card';
+                
+                const topThree = sortedNominees.slice(0, 3);
+                const remainingNominees = sortedNominees.slice(3);
+
+                let nomineesHTML = '';
+                
+                topThree.forEach((nominee, index) => {
+                    const rank = index + 1;
+                    const percentage = totalCategoryVotes > 0 ? ((nominee.votes / totalCategoryVotes) * 100).toFixed(1) : '0.0';
+                    const progressWidth = totalCategoryVotes > 0 ? (nominee.votes / totalCategoryVotes) * 100 : 0;
+                    
+                    nomineesHTML += `
+                        <div class="nominee-analytics-item rank-${rank}">
+                            <div class="nominee-info">
+                                <div class="rank-badge">${rank}</div>
+                                <div class="nominee-name">${nominee.name}</div>
+                            </div>
+                            <div class="nominee-stats">
+                                <div class="vote-count">${nominee.votes.toLocaleString()}</div>
+                                <div class="vote-percentage">${percentage}%</div>
+                            </div>
+                            <div class="progress-bar" style="width: ${progressWidth}%"></div>
+                        </div>
+                    `;
+                });
+
+                let hiddenNomineesHTML = '';
+                if (remainingNominees.length > 0) {
+                    remainingNominees.forEach((nominee, index) => {
+                        const rank = index + 4;
+                        const percentage = totalCategoryVotes > 0 ? ((nominee.votes / totalCategoryVotes) * 100).toFixed(1) : '0.0';
+                        const progressWidth = totalCategoryVotes > 0 ? (nominee.votes / totalCategoryVotes) * 100 : 0;
+                        
+                        hiddenNomineesHTML += `
+                            <div class="nominee-analytics-item">
+                                <div class="nominee-info">
+                                    <div class="rank-badge" style="background: linear-gradient(135deg, #6c757d, #495057);">${rank}</div>
+                                    <div class="nominee-name">${nominee.name}</div>
+                                </div>
+                                <div class="nominee-stats">
+                                    <div class="vote-count">${nominee.votes.toLocaleString()}</div>
+                                    <div class="vote-percentage">${percentage}%</div>
+                                </div>
+                                <div class="progress-bar" style="width: ${progressWidth}%"></div>
+                            </div>
+                        `;
+                    });
+                }
+
+                categoryCard.innerHTML = `
+                    <div class="category-analytics-header">
+                        <span>${categoryData.name}</span>
+                        <div class="category-total-votes">
+                            ${totalCategoryVotes.toLocaleString()} votes
+                        </div>
+                    </div>
+                    <div class="nominees-analytics">
+                        ${nomineesHTML}
+                        ${remainingNominees.length > 0 ? `
+                            <div class="hidden-nominees" id="hidden-${categoryId}">
+                                ${hiddenNomineesHTML}
+                            </div>
+                            <button class="see-more-btn" onclick="toggleSeeMore('${categoryId}')">
+                                <i class="fas fa-chevron-down"></i> See More (${remainingNominees.length} more)
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+
+                container.appendChild(categoryCard);
+            });
+        }
+
+        function toggleSeeMore(categoryId) {
+            const hiddenSection = document.getElementById(`hidden-${categoryId}`);
+            const button = event.target.closest('button');
+            
+            if (hiddenSection.classList.contains('show')) {
+                hiddenSection.classList.remove('show');
+                button.innerHTML = '<i class="fas fa-chevron-down"></i> See More';
+            } else {
+                hiddenSection.classList.add('show');
+                button.innerHTML = '<i class="fas fa-chevron-up"></i> See Less';
+            }
+        }
+
+        function setupRealTimeUpdates() {
+            // Listen for real-time updates
+            db.collection('nulass_voting').onSnapshot((snapshot) => {
+                // Reload data when changes occur
+                loadAdminData();
+            });
+        }
+
+        async function exportToPDF() {
+            try {
+                showAlert('Generating PDF report...', 'success');
+                
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add logo and header
+                doc.setFontSize(24);
+                doc.setTextColor(183, 65, 14);
+                doc.text('NULASS AWARDS', 20, 30);
+                doc.text('VOTING REPORT', 20, 45);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 20, 60);
+                doc.text(`Total Votes: ${adminData.totalVotes.toLocaleString()}`, 20, 75);
+                doc.text(`Total Revenue: ₦${adminData.totalRevenue.toLocaleString()}`, 20, 85);
+                doc.text(`Total Voters: ${adminData.voters.size.toLocaleString()}`, 20, 95);
+                
+                let yPosition = 115;
+                
+                // Add categories data
+                Object.entries(nominationCategories).forEach(([categoryId, categoryData]) => {
+                    const categoryVotes = adminData.categories[categoryId] || {};
+                    
+                    // Calculate total votes for this category
+                    let totalCategoryVotes = 0;
+                    Object.values(categoryVotes).forEach(nominee => {
+                        totalCategoryVotes += nominee.votes || 0;
+                    });
+
+                    // Sort nominees by vote count
+                    const sortedNominees = categoryData.nominees.map((nominee, index) => ({
+                        ...nominee,
+                        originalIndex: index,
+                        votes: categoryVotes[index]?.votes || 0
+                    })).sort((a, b) => b.votes - a.votes);
+
+                    // Check if we need a new page
+                    if (yPosition > 250) {
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    // Category header
+                    doc.setFontSize(14);
+                    doc.setTextColor(183, 65, 14);
+                    doc.text(`${categoryData.name} (${totalCategoryVotes} votes)`, 20, yPosition);
+                    yPosition += 15;
+                    
+                    // Top 3 nominees
+                    doc.setFontSize(10);
+                    doc.setTextColor(0, 0, 0);
+                    
+                    sortedNominees.slice(0, 3).forEach((nominee, index) => {
+                        const rank = index + 1;
+                        const percentage = totalCategoryVotes > 0 ? ((nominee.votes / totalCategoryVotes) * 100).toFixed(1) : '0.0';
+                        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉';
+                        
+                        doc.text(`${rank}. ${nominee.name} - ${nominee.votes} votes (${percentage}%)`, 25, yPosition);
+                        yPosition += 12;
+                    });
+                    
+                    yPosition += 10;
+                });
+                
+                // Add footer with image
+const pageCount = doc.internal.getNumberOfPages();
+
+for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+
+    // Add your image (bottom-left corner in this example)
+    doc.addImage(
+        "https://i.ibb.co/HcKqrd6/IMG-20250902-WA0109.jpg", // image URL
+        "JPEG",   // format (can be 'JPEG' or 'PNG')
+        100,       // x position
+        270,      // y position
+        15,       // width
+        15        // height
+    );
+
+    // Footer text
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text("Powered by Rewarder", 120, 280); // moved right so it doesn’t overlap with image
+    doc.text(`Page ${i} of ${pageCount}`, 170, 285);
+}
+
+                
+                // Save the PDF
+                const fileName = `nulass-awards-report-${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(fileName);
+                
+                showAlert('PDF report downloaded successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                showAlert('Failed to generate PDF report', 'error');
+            }
+        }
+
+        function showAlert(message, type) {
+            // Remove existing alerts
+            document.querySelectorAll('.alert').forEach(alert => alert.remove());
+            
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type}`;
+            
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle';
+            alertDiv.innerHTML = `
+                <i class="fas fa-${icon}"></i>
+                ${message}
+            `;
+            
+            // Insert at top of admin container
+            const adminContainer = document.querySelector('.admin-container');
+            if (adminContainer) {
+                adminContainer.insertBefore(alertDiv, adminContainer.firstChild);
+            }
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target === document.getElementById('adminLoginModal')) {
+                document.getElementById('adminLoginModal').style.display = 'none';
+            }
+        };
+
+        // Handle ESC key to close modal
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                document.getElementById('adminLoginModal').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+  </html>

@@ -1422,7 +1422,7 @@ const nominationCategories = {
             { name: 'Olotu Moses' },
             { name: 'Scarface' },
             { name: 'Ojikutu Peace' },
-            { name: 'Avosegamu' },
+            { name: 'Semande Senapon Avosegamu' },
             
             { name: 'Peace Onwubadewa' }
         ]
@@ -1541,14 +1541,14 @@ const nominationCategories = {
             { name: 'Ishola' },
             { name: 'Bami' },
             { name: 'BFA' },
-            { name: 'Avosegamu Senator' }
+            { name: 'Semande Senapon Avosegamu' }
         ]
     },
 
     'humanitarian_female': {
         name: 'Humanitarian of the Year (Female)',
         nominees: [
-            { name: 'Avoseganju Serafon' },
+            { name: 'Semande Senapon Avosegamu' },
             { name: 'Aminat' },
             { name: 'Omowunmi Abibat' },
             { name: 'Alliuzanaiyan' }
@@ -2738,8 +2738,50 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
+document.addEventListener('DOMContentLoaded', () => {
+  // Try to find the image by id, fallback to selector
+  const logo = document.getElementById('secretLogo') || document.querySelector('.header-content .logo');
+
+  if (!logo) {
+    console.error('Secret logo not found. Add id="secretLogo" or use the selector .header-content .logo');
+    return;
+  }
+
+  let clickCount = 0;
+  let resetTimer = null;
+  const RESET_MS = 2500; // reset counter after 2.5s of inactivity
+
+  logo.addEventListener('click', () => {
+    clickCount++;
+    console.log(`secret logo clicked: ${clickCount}`);
+
+    // Small visual feedback so user knows click registered
+    logo.style.transition = 'opacity .12s';
+    logo.style.opacity = '0.6';
+    setTimeout(() => logo.style.opacity = '', 120);
+
+    if (clickCount === 3) {
+      // Navigate to admin.html (same folder). Use assign to behave like normal navigation.
+      window.location.assign('admin.html');
+      // reset state (defensive)
+      clickCount = 0;
+      if (resetTimer) { clearTimeout(resetTimer); resetTimer = null; }
+      return;
+    }
+
+    // Reset the counter if the user pauses for longer than RESET_MS
+    if (resetTimer) clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      clickCount = 0;
+      resetTimer = null;
+      console.log('secret click counter reset');
+    }, RESET_MS);
+  });
+});
+
+
 </script>
 
 
    </body>
-       </html>
+    </html>

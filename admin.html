@@ -1565,7 +1565,11 @@ const nominationCategories = {
 
         async function loadAdminData() {
             try {
-                const snapshot = await db.collection('nulass_voting').get();
+               const snapshot = await db.collection('nulass_voting')
+    .where("paymentStatus", "in", ["completed", "successful"])
+
+    .get();
+
                 
                 // Process data
                 adminData = {
@@ -1803,7 +1807,11 @@ const nominationCategories = {
 
         function setupRealTimeUpdates() {
             // Listen for real-time updates
-            db.collection('nulass_voting').onSnapshot((snapshot) => {
+            db.collection('nulass_voting')
+    .where("paymentStatus", "in", ["complete", "successful"])
+
+    .onSnapshot((snapshot) => {
+
                 // Reload data when changes occur
                 loadAdminData();
             });
@@ -1952,6 +1960,54 @@ for (let i = 1; i <= pageCount; i++) {
                 document.getElementById('adminLoginModal').style.display = 'none';
             }
         });
+        
+        
+        let seenVotes = new Set(); // 🔹 track duplicates
+
+snapshot.forEach(doc => {
+    const data = doc.data();
+
+    const voteCount = data.voteCount || 1;
+    const amount = data.paymentAmount || (voteCount * 50);
+    const voter = data.voterEmail;
+    const timestamp = data.timestamp?.toDate() || new Date(data.createdAt);
+
+    // create a unique key for duplicate check (email + exact second)
+    const timeKey = `${voter}_${timestamp.toISOString().slice(0,19)}`; // up to seconds
+
+    if (seenVotes.has(timeKey)) {
+        return; // 🔹 skip duplicate
+    }
+    seenVotes.add(timeKey);
+
+    // ✅ Count valid vote
+    adminData.totalVotes += voteCount;
+    adminData.totalRevenue += amount;
+    adminData.voters.add(voter);
+
+    const categoryId = data.categoryId;
+    const nomineeIndex = data.nomineeIndex;
+
+    if (!adminData.categories[categoryId]) {
+        adminData.categories[categoryId] = {};
+    }
+
+    if (!adminData.categories[categoryId][nomineeIndex]) {
+        adminData.categories[categoryId][nomineeIndex] = {
+            name: data.nominee,
+            votes: 0
+        };
+    }
+
+    adminData.categories[categoryId][nomineeIndex].votes += voteCount;
+
+    const dateKey = timestamp.toDateString();
+    if (!adminData.dailyVotes[dateKey]) {
+        adminData.dailyVotes[dateKey] = 0;
+    }
+    adminData.dailyVotes[dateKey] += voteCount;
+});
+
     </script>
 </body>
-  </html>
+        </html>

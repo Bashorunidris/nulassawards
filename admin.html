@@ -1565,7 +1565,7 @@ const nominationCategories = {
         async function loadAdminData() {
             try {
                const snapshot = await db.collection('nulass_voting')
-    .where("paymentStatus", "in", ["completed", "successful"])
+    .where("paymentStatus", "in", ["completed"])
 
     .get();
 
@@ -1807,7 +1807,7 @@ const nominationCategories = {
         function setupRealTimeUpdates() {
             // Listen for real-time updates
             db.collection('nulass_voting')
-    .where("paymentStatus", "in", ["complete", "successful"])
+    .where("paymentStatus", "in", ["complete"])
 
     .onSnapshot((snapshot) => {
 

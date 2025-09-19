@@ -2114,7 +2114,7 @@ function processPayment() {
             logo: "https://i.ibb.co/zWr7G0xB/IMG-20250819-WA0055-1.jpg",
         },
         callback: (response) => {
-            if (response.status === "successful" || response.status === "completed" || response.tx_ref) {
+            if (response.status === "successful" || response.status === "complete" || response.tx_ref) {
                 processVoteAfterPayment(response, voteData)
                     .then(() => {
                         showAlert(`Successfully voted ${voteCount} time(s) for ${nominee.name}! Thank you for participating.`, 'success');
@@ -2795,6 +2795,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
    </body>
     </html>
+
 
 
 

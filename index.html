@@ -1340,8 +1340,8 @@ const db = firebase.firestore();
 
 // Categories with nominees (Nulass Awards)
 const nominationCategories = {
-    'staylite_of_year': {
-        name: 'Staylite of the Year',
+    'staylite_year': {
+        name: 'Staylite of the Year (Male)',
         nominees: [
             { name: 'Bami' },
             { name: 'Rabiu' },
@@ -1350,6 +1350,15 @@ const nominationCategories = {
             { name: 'Ojikutu Abdullahi Abdulmal' }
         ]
     },
+
+  'staylite_of_year': {
+        name: 'Staylite of the Year (Female)',
+        nominees: [
+        
+            { name: 'Salisu Azeezat (Bluezee)' }
+        ]
+    },
+
 
     'socialite_of_year': {
         name: 'Socialite of the Year',
@@ -1424,7 +1433,8 @@ const nominationCategories = {
             { name: 'Ojikutu Peace' },
             { name: 'Semande Senapon Avosegamu' },
             
-            { name: 'Peace Onwubadewa' }
+            { name: 'Peace Onwubadewa' },
+            { name: 'Maito' }
         ]
     },
 
@@ -1715,7 +1725,7 @@ const nominationCategories = {
             { name: 'Olatunwa Shawarma' },
             { name: 'Accessories with Aminah' },
             { name: 'Faithie Nails' },
-            { name: 'Roxy's cuisine ' }
+            { name: 'Roxy cuisine ' }
         ]
     },
 
@@ -2785,6 +2795,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
    </body>
     </html>
+
 
 
 
